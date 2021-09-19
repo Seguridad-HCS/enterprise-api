@@ -1,0 +1,18 @@
+# docker-compose configuration file
+version: '3.7'
+services:
+  database:
+    env_file: ./.env
+    image: 'postgres'
+    container_name: 'database'
+# Conf for complex architectures
+#    expose:
+#      - '${DB_PORT}'
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./data:/var/lib/postgresql/data/
