@@ -29,7 +29,7 @@ const options = {
             url: 'http://localhost:1025/',
         }],
     },
-    apis: ['./src/routes/*.ts'],
+    apis: ['./src/docs/*.ts'],
 };
 const specs = swaggerJsdoc(options);
 

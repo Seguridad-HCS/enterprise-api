@@ -6,7 +6,9 @@ import {
 	CreateDateColumn,
 	ManyToOne,
 	JoinColumn,
-	PrimaryColumn
+	PrimaryColumn,
+	getRepository,
+	BaseEntity
 } from 'typeorm';
 import { 
 	IsBoolean, 
@@ -31,14 +33,15 @@ interface newEmployee {
 	email: string;
 	password: string;
 	nss: string;
-	bloodType: string;
+	bloodtype: string;
+	baseWage: number;
 	rfc: string;
 	locationProfile: LocationProfile;
 }
 
 @Entity({ name: 'employee' })
 @Unique(['name', 'surname', 'secondSurname'])
-export default class Employee {
+export default class Employee extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
     id!: string;
@@ -97,6 +100,9 @@ export default class Employee {
 	@Column({ type: 'integer', nullable: true })
 	lastLogin?: number;
 
+	@Column({ type: 'integer', nullable: false })
+	baseWage?: number;
+
 	@Column({ nullable: true })
 	locationProfileId?: number
     @ManyToOne(() => LocationProfile, (profile) => profile.employees)
@@ -104,6 +110,7 @@ export default class Employee {
 	locationProfile?: LocationProfile;
 
 	public constructor(params?: newEmployee) {
+		super();
 		if (params) {
 			this.id = uuidv4();
 			this.name = params.name;
@@ -114,14 +121,90 @@ export default class Employee {
 			this.email = params.email;
 			this.password = params.password;
 			this.nss = params.nss;
-			this.bloodtype = params.bloodType;
+			this.bloodtype = params.bloodtype;
 			this.rfc = params.rfc;
+			this.baseWage = params.baseWage;
 			this.locationProfile = params.locationProfile;
+		}
+	}
+
+	public async getEmployee(employeeId:string) {
+		const employee = await getRepository(Employee)
+        	.createQueryBuilder('employee')
+        	.leftJoinAndSelect('employee.locationProfile', 'profile')
+			.leftJoinAndSelect('profile.location', 'location')
+			.leftJoinAndSelect('location.address', 'address')
+        	.leftJoinAndSelect('profile.position', 'position')
+			.leftJoinAndSelect('position.department', 'department')
+        	.where('employee.id = :employeeId', { employeeId })
+        	.getOne();
+		if(employee == undefined) throw Error('No employee');
+		this.id = employee.id;
+		this.name = employee.name;
+		this.surname = employee.surname;
+		this.secondSurname = employee.secondSurname;
+		this.sex = employee.sex;
+		this.birthDate = employee.birthDate;
+		this.createdAt = employee.createdAt;
+		this.email = employee.email;
+		this.password = employee.password;
+		this.nss = employee.nss;
+		this.bloodtype = employee.bloodtype;
+		this.rfc = employee.rfc;
+		this.baseWage = employee.baseWage;
+		this.locationProfile = employee.locationProfile;
+
+		return {
+			id: this.id,
+			name: this.name,
+			surname: this.surname,
+			secondSurname: this.secondSurname,
+			sex: this.sex,
+			birthDate: this.birthDate,
+			createdAt: this.createdAt,
+			email: this.email,
+			nss: this.nss,
+			bloodtype: this.bloodtype,
+			rfc: this.rfc,
+			baseWage: this.baseWage,
+			profile: {
+				id: this.locationProfile?.id,
+				total: this.locationProfile?.total,
+				minAge: this.locationProfile?.minAge,
+				maxAge: this.locationProfile?.maxAge,
+				sex: this.locationProfile?.sex,
+				minWage: this.locationProfile?.minWage,
+				maxWage: this.locationProfile?.maxWage,
+				price: this.locationProfile?.price
+			},
+			position: {
+				name: this.locationProfile?.position?.name,
+				description: this.locationProfile?.position?.description,
+				department: this.locationProfile?.position?.department?.name
+			},
+			location: {
+				id: this.locationProfile?.location?.id,
+				name: this.locationProfile?.location?.name,
+				service: this.locationProfile?.location?.service,
+				address: {
+					street: this.locationProfile?.location?.address?.street,
+					outNumber: this.locationProfile?.location?.address?.outNumber,
+					intNumber: this.locationProfile?.location?.address?.intNumber,
+					zip: this.locationProfile?.location?.address?.zip,
+					municipality: this.locationProfile?.location?.address?.municipality,
+					state: this.locationProfile?.location?.address?.state,
+					neighborhood: this.locationProfile?.location?.address?.neighborhood
+				}
+			}
 		}
 	}
 
 	@BeforeInsert()
 	async validateModel() {
-		await validateOrReject(this);
+		try {
+			await validateOrReject(this);
+		} catch(e) {
+			return e;
+		}
 	}
 }

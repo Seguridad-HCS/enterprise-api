@@ -8,7 +8,7 @@
     "staticdev": "ts-node -r tsconfig-paths/register src/app.ts",
     "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/app.ts",
     "test": "NODE_ENV=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register  \"test/**/*.spec.ts\"",
-    "seed": "ts-node src/dbSeed.ts"
+    "seed": "ts-node -r tsconfig-paths/register src/dbSeed.ts"
   },
   "keywords": [],
   "author": "",

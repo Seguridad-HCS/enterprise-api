@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
+import dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
 
-import Employee from '../../../models/Employee.model';
+import Employee from '../../models/Employee.model';
+
+dotenv.config();
 
 export default async(req:Request, res:Response) => {
     try {
@@ -17,7 +20,7 @@ export default async(req:Request, res:Response) => {
             server: 'Usuario no encontrado'
         });
         else {
-            const token = jwt.sign({ data: query!.id }, 'Esto es un test', {
+            const token = jwt.sign({ data: query!.id }, <string>process.env.SERVER_TOKEN, {
                 expiresIn: '1h'
             });
             res.status(200)
@@ -27,7 +30,7 @@ export default async(req:Request, res:Response) => {
                     name: `${query.name} ${query.surname}`,
                     role: `${query.locationProfile!.position!.name}`
                 });
-            const { iat } = jwt.verify(token, 'Esto es un test') as jwt.JwtPayload;
+            const { iat } = jwt.verify(token, <string>process.env.SERVER_TOKEN) as jwt.JwtPayload;
             query.lastLogin = iat;
             await getRepository(Employee).save(query);
         }

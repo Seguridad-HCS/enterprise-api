@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
-import Employee from '../../../models/Employee.model';
+import Employee from '../../models/Employee.model';
 import { getRepository } from 'typeorm';
 
 export default async(req:Request, res:Response) => {

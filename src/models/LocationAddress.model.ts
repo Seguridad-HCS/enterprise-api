@@ -76,6 +76,10 @@ export default class LocationAddress {
 
 	@BeforeInsert()
 	async validateModel() {
-		await validateOrReject(this)
+		try {
+			await validateOrReject(this)
+		} catch(e) {
+			return e;
+		}
 	}
 }

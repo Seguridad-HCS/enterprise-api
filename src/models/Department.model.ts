@@ -44,6 +44,10 @@ export default class Department {
 
 	@BeforeInsert()
 	async validateModel() {
-		await validateOrReject(this);
+		try {
+			await validateOrReject(this);
+		} catch(e) {
+			return e;
+		}
 	}
 }

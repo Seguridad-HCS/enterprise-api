@@ -6,11 +6,11 @@ import { expect } from 'chai';
 
 const app = createServer();
 
-describe('Login endpoint - collaborators', () => {
+describe('Endpoint de inicio de sesion para colaboradores', () => {
     before(async() => await dbConnection());
     after(async() => await getConnection().close());
-    it('/collaborator/login Responds with 200 - Correct credentials', (done) => {
-        request(app).post('/collaborator/login')
+    it('POST /collaborators/auth/login Responds with 200 - Credenciales correctas', (done) => {
+        request(app).post('/collaborators/auth/login')
             .send({
                 email: 'oscarmartinez1998lol@gmail.com',
                 password: 'test'
@@ -25,8 +25,8 @@ describe('Login endpoint - collaborators', () => {
                 done();
             });
     });
-    it('/collaborator/login Responds with 404 - Incorrect email', (done) => {
-        request(app).post('/collaborator/login')
+    it('POST /collaborator/auth/login Responds with 404 - Email incorrecto', (done) => {
+        request(app).post('/collaborators/auth/login')
             .send({
                 email: 'test@gmail.com',
                 password: 'test'
@@ -40,8 +40,8 @@ describe('Login endpoint - collaborators', () => {
                 done();
             });
     });
-    it('/collaborator/login Responds with 404 - Incorrect password', (done) => {
-        request(app).post('/collaborator/login')
+    it('POST /collaborators/auth/login Responds with 404 - Password incorrecto', (done) => {
+        request(app).post('/collaborators/auth/login')
             .send({
                 email: 'oscarmartinez1998lol@gmail.com',
                 password: 'testa'
@@ -55,8 +55,8 @@ describe('Login endpoint - collaborators', () => {
                 done();
             });
     });
-    it('/collaborator/login Responds with 404 - SQL Injection', (done) => {
-        request(app).post('/collaborator/login')
+    it('POST /collaborators/auth/login Responds with 404 - Inyeccion SQL', (done) => {
+        request(app).post('/collaborators/auth/login')
             .send({
                 email: ' or "1"="1"',
                 password: ' or "1"="1"'

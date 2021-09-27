@@ -56,6 +56,10 @@ export default class Position {
 
 	@BeforeInsert()
 	async validateModel() {
-		await validateOrReject(this);
+		try {
+			await validateOrReject(this);
+		} catch(e) {
+			return e
+		}
 	}
 }

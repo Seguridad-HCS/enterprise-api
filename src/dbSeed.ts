@@ -6,6 +6,8 @@ import Department from 'models/Department.model';
 import Location from 'models/Location.model';
 import LocationProfile from 'models/LocationProfile.model';
 import Employee from 'models/Employee.model';
+import Partner from 'models/Partner.model';
+import PartnerContact from 'models/PartnerContact.model';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -71,8 +73,11 @@ const devHouseProfile = new LocationProfile({
     minAge: 18,
     maxAge: 45,
     price: 3500000,
+    minWage: 300000,
+    maxWage: 500000,
     sex: true,
-    position: cto
+    position: cto,
+    location: devHouse
 });
 
 // Employees
@@ -83,12 +88,32 @@ const Employee1 = new Employee({
     email: 'oscarmartinez1998lol@gmail.com',
     password: 'test',
     nss: '8964296',
-    bloodType: 'A+',
+    bloodtype: 'A+',
     rfc: 'MAVO980605',
     birthDate: '05-06-1998',
     sex: true,
+    baseWage: 4500000,
     // image: './public/assets/_testpf1.jpg',
     locationProfile: devHouseProfile
+});
+
+// Partners 
+const partner1 = new Partner({
+    name: 'Comex',
+    legalName: 'Pinturas Comex S.A. de C.V.',
+    rfc: 'MAJO990503Q56',
+    representative: 'Oscar Martinez Vazquez',
+    phoneNumber: '+525536593166',
+    email: 'partner@example.com'
+});
+
+// Partner contacts
+const partnerContact1 = new PartnerContact({
+    name: 'Carlos Vazquez Perez',
+    role: 'Director ejecutivo',
+    phoneNumber: '+525558451755',
+    email: 'carlos@ejemplo.com',
+    partner: partner1
 });
 
 const seed = async () => {
@@ -126,6 +151,15 @@ const seed = async () => {
         const empRepo = getRepository(Employee);
         await empRepo.save(Employee1);
         console.log('Empleados creados');
+
+        const partRepo = getRepository(Partner);
+        await partRepo.save(partner1);
+        console.log('Socios creados');
+
+        const contRepo = getRepository(PartnerContact);
+        await contRepo.save(partnerContact1);
+        console.log('Contactos creados');
+
         return;
     } catch (e) {
         console.trace(e);
