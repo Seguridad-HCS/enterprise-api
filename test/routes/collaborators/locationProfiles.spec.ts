@@ -45,11 +45,20 @@ describe('Endpoints de perfiles para locacion para colaboradores', () => {
             .set('token', token)
             .send(data)
             .expect('Content-type', /json/)
-            .expect(200)
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body.server).to.equal('Perfil creado exitosamente');
-                expect(res.body.profile).to.be.a('object');
+                expect(res.body.server).to.equal('Perfil creado');
+                expect(res.body.profile.id).to.be.a('number');
+                expect(res.body.profile.total).to.be.a('number');
+                expect(res.body.profile.minAge).to.be.a('number');
+                expect(res.body.profile.maxAge).to.be.a('number');
+                expect(res.body.profile.price).to.be.a('number');
+                expect(res.body.profile.sex).to.be.a('boolean');
+                expect(res.body.profile.minWage).to.be.a('number');
+                expect(res.body.profile.maxWage).to.be.a('number');
+                expect(res.body.profile.positionId).to.be.undefined;
+                expect(res.body.profile.locationId).to.be.undefined;
                 locationId = res.body.profile.id;
                 done();
             });
@@ -61,7 +70,7 @@ describe('Endpoints de perfiles para locacion para colaboradores', () => {
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body.server).to.equal('Perfil eliminado exitosamente');
+                expect(res.body.server).to.equal('Perfil eliminado');
                 done();
             });
     });

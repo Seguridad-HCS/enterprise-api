@@ -10,7 +10,7 @@ export default async(req:Request, res:Response) => {
         if(profile.employees!.length > 0) throw Error('Still employees in location');
         await profile.remove();
         res.status(200).json({
-            server: 'Perfil eliminado exitosamente'
+            server: 'Perfil eliminado'
         });
     } catch(e) {
         if(e instanceof Error) {

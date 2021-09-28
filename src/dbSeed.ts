@@ -81,12 +81,11 @@ const devHouseProfile = new LocationProfile({
 });
 
 // Employees
-const Employee1 = new Employee({
+const employee1 = new Employee({
     name: 'Oscar',
     surname: 'Martinez',
     secondsurname: 'Vazquez',
     email: 'oscarmartinez1998lol@gmail.com',
-    password: 'test',
     nss: '8964296',
     bloodtype: 'A+',
     rfc: 'MAVO980605',
@@ -96,6 +95,7 @@ const Employee1 = new Employee({
     // image: './public/assets/_testpf1.jpg',
     locationProfile: devHouseProfile
 });
+employee1.setPassword('test');
 
 // Partners 
 const partner1 = new Partner({
@@ -149,7 +149,7 @@ const seed = async () => {
 
         // Create employees
         const empRepo = getRepository(Employee);
-        await empRepo.save(Employee1);
+        await empRepo.save(employee1);
         console.log('Empleados creados');
 
         const partRepo = getRepository(Partner);

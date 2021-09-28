@@ -9,7 +9,7 @@ export default async(req:Request, res:Response) => {
         await location.getLocation(parseInt(req.params.locationId));
         await location.remove();
         res.status(200).json({
-            server: 'Locacion eliminada exitosamente'
+            server: 'Locacion eliminada'
         });
     } catch(e) {
         if(e instanceof Error) {

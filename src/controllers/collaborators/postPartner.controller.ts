@@ -5,8 +5,8 @@ export default async(req:Request, res:Response) => {
     try {
         const partner = new Partner(req.body);
         await partner.save();
-        res.status(200).json({
-            server: 'Socio creado exitosamente',
+        res.status(201).json({
+            server: 'Socio creado',
             partner
         });
     } catch(e) {

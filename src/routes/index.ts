@@ -8,6 +8,7 @@ import collabPartners from 'routes/partners.routes';
 
 const router = Router();
 
+// Test route
 router.get('/', (req:Request, res:Response) => {
     res.status(200).json('Ok')
 })

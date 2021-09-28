@@ -5,8 +5,8 @@ export default async(req:Request, res:Response) => {
     try {
         const profile = new LocationProfile(req.body);
         await profile.save();
-        res.status(200).json({
-            server: 'Perfil creado exitosamente',
+        res.status(201).json({
+            server: 'Perfil creado',
             profile
         })
     } catch(e) {

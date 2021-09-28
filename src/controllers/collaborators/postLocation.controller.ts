@@ -7,7 +7,7 @@ export default async(req: Request, res: Response) => {
         const location = new Location(req.body);
         await getRepository(Location).save(location);
         res.status(201).json({
-            server: 'Locacion creada exitosamente',
+            server: 'Locacion creada',
             location
         });
     } catch(e) {

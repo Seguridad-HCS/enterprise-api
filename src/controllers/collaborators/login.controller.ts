@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import Employee from '../../models/Employee.model';
 
@@ -16,7 +17,7 @@ export default async(req:Request, res:Response) => {
             .leftJoinAndSelect('locProfile.position', 'position')
             .where('user.email = :email', { email: req.body.email })
             .getOne();
-        if(query == undefined || query?.password != req.body.password) res.status(404).json({
+        if(query == undefined || !compare(req.body.password, query.password!)) res.status(404).json({
             server: 'Usuario no encontrado'
         });
         else {
@@ -48,4 +49,8 @@ export default async(req:Request, res:Response) => {
             })
         }
     }
+}
+
+const compare = (password:string, originalPassword:string) => {
+    return bcrypt.compareSync(password, originalPassword);
 }

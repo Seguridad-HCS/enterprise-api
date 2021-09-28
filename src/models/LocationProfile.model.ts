@@ -87,8 +87,8 @@ export default class LocationProfile extends BaseEntity {
             this.maxAge = params.maxAge;
             this.price = params.price;
             this.sex = params.sex;
-            this.minWage = params.minWage;
-            this.maxWage = params.maxWage;
+            this.minWage = Math.round(params.minWage * 100);
+            this.maxWage = Math.round(params.maxWage * 100);
             typeof(params.position) === 'number' ? this.positionId = params.position : this.position = params.position;
             typeof(params.location) === 'number' ? this.locationId = params.location : this.location = params.location;
 		}
@@ -97,6 +97,9 @@ export default class LocationProfile extends BaseEntity {
     public async getLocationProfile(profileId:number) {
 		const profile = await getRepository(LocationProfile)
         	.createQueryBuilder('profile')
+            .leftJoinAndSelect('profile.position', 'position')
+            .leftJoinAndSelect('position.department', 'department')
+            .leftJoinAndSelect('profile.location', 'location')
         	.leftJoinAndSelect('profile.employees', 'employees')
         	.where('profile.id = :profileId', { profileId })
         	.getOne();
@@ -111,6 +114,23 @@ export default class LocationProfile extends BaseEntity {
         this.positionId = profile.positionId;
         this.locationId = profile.locationId;
         this.employees = profile.employees;
+        this.position = profile.position;
+        return {
+            id: this.id,
+            minWage: this.minWage! / 100,
+            maxWage: this.maxWage! / 100,
+            price: this.price,
+            sex: this.sex,
+            minAge: this.minAge,
+            maxAge: this.maxAge,
+            employees: this.employees,
+            location: this.location,
+            position: {
+                name: this.position?.name,
+                description: this.position?.description,
+                department: this.position?.department.name
+            }
+        }
 	}
 
 	@BeforeInsert()

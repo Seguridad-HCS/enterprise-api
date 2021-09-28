@@ -21,6 +21,7 @@ import {
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt';
 
 import LocationProfile from 'models/LocationProfile.model';
 
@@ -31,7 +32,6 @@ interface newEmployee {
 	sex: boolean;
 	birthDate: string;
 	email: string;
-	password: string;
 	nss: string;
 	bloodtype: string;
 	baseWage: number;
@@ -78,7 +78,7 @@ export default class Employee extends BaseEntity {
 	@Length(3, 50)
 	email?: string;
 
-	@Column({ type: 'varchar', length: 80, nullable: false })
+	@Column({ type: 'varchar', length: 80, nullable: true })
 	@Length(3, 80)
 	password?: string;
 
@@ -112,14 +112,12 @@ export default class Employee extends BaseEntity {
 	public constructor(params?: newEmployee) {
 		super();
 		if (params) {
-			this.id = uuidv4();
 			this.name = params.name;
 			this.surname = params.surname;
 			this.secondSurname = params.secondsurname;
 			this.sex = params.sex;
 			this.birthDate = new Date(params.birthDate);
 			this.email = params.email;
-			this.password = params.password;
 			this.nss = params.nss;
 			this.bloodtype = params.bloodtype;
 			this.rfc = params.rfc;
@@ -147,7 +145,6 @@ export default class Employee extends BaseEntity {
 		this.birthDate = employee.birthDate;
 		this.createdAt = employee.createdAt;
 		this.email = employee.email;
-		this.password = employee.password;
 		this.nss = employee.nss;
 		this.bloodtype = employee.bloodtype;
 		this.rfc = employee.rfc;
@@ -199,9 +196,15 @@ export default class Employee extends BaseEntity {
 		}
 	}
 
+	public setPassword(password:string) {
+		const salt = bcrypt.genSaltSync(10);
+		this.password = bcrypt.hashSync(password, salt);
+	}
+
 	@BeforeInsert()
 	async validateModel() {
 		try {
+			this.id = uuidv4();
 			await validateOrReject(this);
 		} catch(e) {
 			return e;

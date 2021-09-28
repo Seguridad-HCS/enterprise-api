@@ -52,7 +52,7 @@ describe('Endpoints de locaciones para colaboradores', () => {
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body.server).to.equal('Locacion creada exitosamente');
+                expect(res.body.server).to.equal('Locacion creada');
                 expect(res.body.location).to.be.not.undefined;
                 testLocationId = res.body.location.id;
                 done();
@@ -65,7 +65,7 @@ describe('Endpoints de locaciones para colaboradores', () => {
             .expect(200)
             .end((err, res) => {
                 if(err) return done(err);
-                expect(res.body.server).eql('Locacion eliminada exitosamente');
+                expect(res.body.server).eql('Locacion eliminada');
                 done();
             });
     });

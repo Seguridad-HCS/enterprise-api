@@ -41,10 +41,10 @@ describe('Endpoints para el manejo de colaboradores', () => {
                 phoneNumber: '+525536593166'
             })
             .expect('Content-type', /json/)
-            .expect(200)
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body.server).to.equal('Socio creado exitosamente');
+                expect(res.body.server).to.equal('Socio creado');
                 partnerId = res.body.partner.id;
                 done();
             });

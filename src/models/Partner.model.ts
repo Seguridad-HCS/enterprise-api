@@ -13,6 +13,7 @@ import {
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt';
 
 import PartnerContact from 'models/PartnerContact.model';
 
@@ -65,7 +66,6 @@ export default class Partner extends BaseEntity {
 	public constructor(params?: InewPartner) {
         super();
 		if (params) {
-            this.id = uuidv4();
 			this.name = params.name;
 			this.legalName = params.legalName;
             this.rfc = params.rfc;
@@ -110,9 +110,15 @@ export default class Partner extends BaseEntity {
 		return partners;
 	}
 
+    public setPassword(password:string) {
+		const salt = bcrypt.genSaltSync(10);
+		this.password = bcrypt.hashSync(this.password!, salt);
+	}
+
 	@BeforeInsert()
 	async validateModel() {
 		try {
+            this.id = uuidv4();
 			await validateOrReject(this);
 		} catch(e) {
 			return e;
