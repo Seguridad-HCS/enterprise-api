@@ -6,10 +6,11 @@ import Employee from 'models/Employee.model';
 export default async(req:Request, res:Response) => {
     try {
         const employee = new Employee(req.body);
+        const query = employee.formatEmployee();
         await getRepository(Employee).save(employee);
         res.status(201).json({
             server: 'Colaborador registrado',
-            employee
+            employee: query
         });
     } catch(e) {
         if(e instanceof Error) {

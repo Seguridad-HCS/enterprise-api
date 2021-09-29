@@ -8,8 +8,10 @@ export default async(req:Request, res:Response) => {
         res.status(200).json({ employee: data });
     } catch(e) {
         if(e instanceof Error) {
-            console.log(e);
-            res.status(500).json({ 
+            if(e.message === 'No employee') res.status(404).json({
+                server: 'Empleado no encontrado'
+            });
+            else res.status(500).json({ 
                 server: 'Error interno en el servidor'
             });
         }

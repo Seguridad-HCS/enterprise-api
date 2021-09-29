@@ -36,6 +36,7 @@ describe('Collaborators endpoints', () => {
         done();
     });
     it('POST /collaborators/employees Registra un nuevo empleado en el sistema', (done) => {
+        // TODO especificar el objeto que se recibe
         request(app).post('/collaborators/employees/')
             .set('token', token)
             .send({
@@ -43,7 +44,6 @@ describe('Collaborators endpoints', () => {
                 surname: 'Example',
                 secondsurname: 'Sample',
                 email: 'test@example.com',
-                password: 'test',
                 nss: '8964296',
                 bloodtype: 'A+',
                 rfc: 'MAVO980605',

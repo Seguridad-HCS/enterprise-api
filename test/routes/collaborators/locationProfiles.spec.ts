@@ -57,8 +57,8 @@ describe('Endpoints de perfiles para locacion para colaboradores', () => {
                 expect(res.body.profile.sex).to.be.a('boolean');
                 expect(res.body.profile.minWage).to.be.a('number');
                 expect(res.body.profile.maxWage).to.be.a('number');
-                expect(res.body.profile.positionId).to.be.undefined;
-                expect(res.body.profile.locationId).to.be.undefined;
+                expect(res.body.profile.positionId).to.a('number');
+                expect(res.body.profile.locationId).to.a('number');
                 locationId = res.body.profile.id;
                 done();
             });

@@ -21,6 +21,8 @@ import {
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import { version as uuidVersion } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 import bcrypt from 'bcrypt';
 
 import LocationProfile from 'models/LocationProfile.model';
@@ -28,7 +30,7 @@ import LocationProfile from 'models/LocationProfile.model';
 interface newEmployee {
 	name: string;
 	surname: string;
-	secondsurname: string;
+	secondSurname: string;
 	sex: boolean;
 	birthDate: string;
 	email: string;
@@ -114,7 +116,7 @@ export default class Employee extends BaseEntity {
 		if (params) {
 			this.name = params.name;
 			this.surname = params.surname;
-			this.secondSurname = params.secondsurname;
+			this.secondSurname = params.secondSurname;
 			this.sex = params.sex;
 			this.birthDate = new Date(params.birthDate);
 			this.email = params.email;
@@ -127,6 +129,7 @@ export default class Employee extends BaseEntity {
 	}
 
 	public async getEmployee(employeeId:string) {
+		if(!(uuidValidate(employeeId) && uuidVersion(employeeId) === 4)) throw Error('No employee')
 		const employee = await getRepository(Employee)
         	.createQueryBuilder('employee')
         	.leftJoinAndSelect('employee.locationProfile', 'profile')
@@ -151,6 +154,10 @@ export default class Employee extends BaseEntity {
 		this.baseWage = employee.baseWage;
 		this.locationProfile = employee.locationProfile;
 
+		return this.formatEmployee();
+	}
+
+	public formatEmployee() {
 		return {
 			id: this.id,
 			name: this.name,
@@ -194,7 +201,7 @@ export default class Employee extends BaseEntity {
 				}
 			}
 		}
-	}
+	} 
 
 	public setPassword(password:string) {
 		const salt = bcrypt.genSaltSync(10);

@@ -5,9 +5,10 @@ export default async(req:Request, res:Response) => {
     try {
         const partner = new Partner(req.body);
         await partner.save();
+        const query = partner.formatPartner();
         res.status(201).json({
             server: 'Socio creado',
-            partner
+            partner: query
         });
     } catch(e) {
         if(e instanceof Error) {

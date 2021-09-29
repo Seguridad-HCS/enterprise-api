@@ -2,6 +2,10 @@ import express, { Application } from 'express';
 
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import cors from 'cors';
+import multer from 'multer';
+import * as fs from 'fs';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
@@ -34,6 +38,9 @@ const options = {
 const specs = swaggerJsdoc(options);
 
 export default function createServer() {
+    if (!fs.existsSync('files')) {
+        fs.mkdirSync('files')
+    }
     const app: Application = express();
     dotenv.config();
     app.set('PORT', parseInt(<string>process.env.SERVER_PORT, 10) || 4000);
@@ -47,7 +54,20 @@ export default function createServer() {
             swaggerUI.setup(specs, { explorer: true })
         );
     }
+    app.use(express.static('public'));
+    app.use(helmet());
     app.use(express.json());
+    app.use(multer({
+            storage: multer.memoryStorage(),
+            limits: { fileSize: 100 * 1024 * 1024 } // Maximo 10mb por archivo
+        }).single('file')
+    );
+    app.use(cors({
+        methods: ['GET', 'PUT', 'POST', 'DELETE'],
+		origin: '*',
+		allowedHeaders: ['Content-Type', 'session'],
+		exposedHeaders: ['Content-Type', 'Content-disposition', 'token']
+    }));
     app.use(routes);
     return app;
 }

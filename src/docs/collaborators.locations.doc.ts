@@ -222,8 +222,8 @@
  * paths:
  *  /collaborators/locations/{locationId}:
  *    get:
- *      summary: Elimina una locacion
- *      description: Elimina una locacion solicitada, la unica condicion para que esto se realize de forma exitosa es que esta no tenga a ningun colaborador asociado a ella y esta no pertenezca a un servicio en negociacion, preactivo, activo o finalizado.
+ *      summary: Obtiene una locacion especifica
+ *      description: Obtiene los datos de una locacion
  *      tags: [Colaboradores - Locaciones]
  *      parameters:
  *        - name: token

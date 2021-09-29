@@ -8,6 +8,7 @@ import {
     JoinColumn,
 	getRepository,
 	BaseEntity,
+	ManyToOne,
 } from 'typeorm';
 import { 
 	IsString, 
@@ -16,7 +17,8 @@ import {
 } from 'class-validator';
 
 import LocationAddress from 'models/LocationAddress.model';
-import LocationProfile from './LocationProfile.model';
+import LocationProfile from 'models/LocationProfile.model';
+import Service from 'models/Service.model';
 
 interface Ilocation {
 	name: string;
@@ -56,10 +58,11 @@ export default class Location extends BaseEntity {
 	@Length(3, 30)
 	name?: string;
 
-	@Column({ type: 'varchar', length: 30, nullable: true})
-	@IsString()
-	@Length(3, 30)
-	service?: string; // Pendiente agregar a servicios
+	@Column({ nullable: true })
+	serviceId?: number
+    @ManyToOne(() => Service, (service) => service.locations)
+	@JoinColumn({ name: 'serviceId' })
+	service?: Service;
 
 	@Column({ type: 'boolean', nullable: false, default:true })
 	status?: boolean;

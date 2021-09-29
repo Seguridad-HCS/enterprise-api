@@ -36,10 +36,15 @@
  *               schema: 
  *                 type: object
  *                 properties: 
+ *                   server:
+ *                    type: string
+ *                    example: Inicio exitoso
  *                   name: 
  *                    type: string
+ *                    example: John Doe
  *                   role:
  *                    type: string
+ *                    example: Desarrollador
  *         '404':
  *          description: El email o la contraseña son incorrectos
  */

@@ -30,7 +30,7 @@ interface InewPartner {
 export default class Partner extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
-    id!: string;
+    id?: string;
 
 	@Column({ type: 'varchar', length: 50, nullable: false, unique: true })
 	@Length(3, 30)
@@ -91,6 +91,10 @@ export default class Partner extends BaseEntity {
         this.phoneNumber = query.phoneNumber;
         this.email = query.email;
         this.contacts = query.contacts
+        return this.formatPartner();
+    }
+
+    public formatPartner() {
         return {
             id: this.id,
             name: this.name,
