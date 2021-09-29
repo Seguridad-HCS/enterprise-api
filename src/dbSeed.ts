@@ -84,7 +84,7 @@ const devHouseProfile = new LocationProfile({
 const employee1 = new Employee({
     name: 'Oscar',
     surname: 'Martinez',
-    secondsurname: 'Vazquez',
+    secondSurname: 'Vazquez',
     email: 'oscarmartinez1998lol@gmail.com',
     nss: '8964296',
     bloodtype: 'A+',
@@ -118,6 +118,7 @@ const partnerContact1 = new PartnerContact({
 
 const seed = async () => {
     try {
+        console.log('Ejecutando semilla del servidor');
         await dbConnection();
 
         // Create departments

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_PATH=./dist node dist/app.js",
     "build": "tsc -p . --excludeDirectories ./test",
     "staticdev": "ts-node -r tsconfig-paths/register src/app.ts",
     "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/app.ts",

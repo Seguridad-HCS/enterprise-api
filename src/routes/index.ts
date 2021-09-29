@@ -20,4 +20,9 @@ router.use('/collaborators/locations/profiles', collabLocationProfiles);
 router.use('/collaborators/employees', collabEmployees);
 router.use('/collaborators/partners', collabPartners);
 
+// Catch non implemented routes
+router.all('*', (req:Request, res:Response) => {
+    res.status(404).json('Route not found');
+});
+
 export default router;
