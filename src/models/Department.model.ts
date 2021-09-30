@@ -2,14 +2,16 @@ import {
 	Entity,
 	Column,
 	BeforeInsert,
-	PrimaryGeneratedColumn,
 	OneToMany,
+	PrimaryColumn,
 } from 'typeorm';
 import { 
 	IsString, 
+	IsUUID, 
 	Length, 
 	validateOrReject 
 } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 import Position from 'models/Position.model';
 
 interface InewDepartment {
@@ -19,8 +21,9 @@ interface InewDepartment {
 
 @Entity({ name: 'department' })
 export default class Department {
-	@PrimaryGeneratedColumn('increment')
-    id?: number;
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false, unique: true })
 	@IsString()
@@ -44,10 +47,7 @@ export default class Department {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this);
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

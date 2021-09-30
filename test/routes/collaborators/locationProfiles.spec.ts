@@ -22,7 +22,14 @@ describe('Endpoints de perfiles para locacion para colaboradores', () => {
             .end((err, res) => {
                 if (err) return done(err);
                 token = res.headers.token;
-                done();
+                // Get some random partnerId
+                request(app).get('/collaborators/locations')
+                    .set('token', token)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        locationId = res.body.locations![0].id;
+                        done();
+                    });
             });
     });
     after((done) => {
@@ -39,7 +46,7 @@ describe('Endpoints de perfiles para locacion para colaboradores', () => {
             "maxWage": 500000,
             "sex": true,
             "position": 1,
-            "location": 1
+            "location": locationId
         }
         request(app).post('/collaborators/locations/profiles')
             .set('token', token)

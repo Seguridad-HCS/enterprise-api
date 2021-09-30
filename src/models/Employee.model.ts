@@ -46,7 +46,7 @@ interface newEmployee {
 export default class Employee extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
-    id!: string;
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false })
 	@IsString()
@@ -81,7 +81,7 @@ export default class Employee extends BaseEntity {
 	email?: string;
 
 	@Column({ type: 'varchar', length: 80, nullable: true })
-	@Length(3, 80)
+	@IsOptional()
 	password?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false })
@@ -106,7 +106,7 @@ export default class Employee extends BaseEntity {
 	baseWage?: number;
 
 	@Column({ nullable: true })
-	locationProfileId?: number
+	locationProfileId?: string
     @ManyToOne(() => LocationProfile, (profile) => profile.employees)
 	@JoinColumn({ name: 'locationProfileId' })
 	locationProfile?: LocationProfile;
@@ -129,7 +129,7 @@ export default class Employee extends BaseEntity {
 	}
 
 	public async getEmployee(employeeId:string) {
-		if(!(uuidValidate(employeeId) && uuidVersion(employeeId) === 4)) throw Error('No employee')
+		if(!(uuidValidate(employeeId) && uuidVersion(employeeId) === 4)) throw Error('No employee');
 		const employee = await getRepository(Employee)
         	.createQueryBuilder('employee')
         	.leftJoinAndSelect('employee.locationProfile', 'profile')
@@ -210,11 +210,7 @@ export default class Employee extends BaseEntity {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			this.id = uuidv4();
-			await validateOrReject(this);
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: true } });
 	}
 }

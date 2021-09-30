@@ -8,6 +8,7 @@ const app = createServer();
 
 describe('Endpoint para finalizar sesion de colaboradores', () => {
     let token:string;
+    let partnerId:string;
     let contactId:number;
     const userData = {
         email: 'oscarmartinez1998lol@gmail.com',
@@ -22,7 +23,14 @@ describe('Endpoint para finalizar sesion de colaboradores', () => {
             .end((err, res) => {
                 if (err) return done(err);
                 token = res.headers.token;
-                done();
+                // Get some random partnerId
+                request(app).get('/collaborators/partners')
+                    .set('token', token)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        partnerId = res.body.partners![0].id;
+                        done();
+                    });
             });
     });
     after((done) => {
@@ -30,13 +38,27 @@ describe('Endpoint para finalizar sesion de colaboradores', () => {
         done();
     });
     it('POST /collaborators/partners/contacts Responds with 201 - Contacto creado exitosamente', (done) => {
+        const data = {
+            name: 'John Doe Test',
+            role: 'Predinte de la empresa',
+            phoneNumber: '+525533554499',
+            email: 'john@doe.com',
+            partner: partnerId,
+        }
         request(app).post('/collaborators/partners/contacts')
             .set('token', token)
+            .send(data)
             .expect('Content-type', /json/)
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body.server).to.equal('Contacto creado');
+                expect(res.body.contact.name).to.be.a('string');
+                expect(res.body.contact.role).to.be.a('string');
+                expect(res.body.contact.phoneNumber).to.be.a('string');
+                expect(res.body.contact.email).to.be.a('string');
+                expect(res.body.contact.partnerId).to.be.a('string');
+                expect(res.body.contact.id).to.be.a('number');
                 done();
             });
     });

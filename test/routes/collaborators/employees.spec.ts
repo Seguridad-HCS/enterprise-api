@@ -42,7 +42,7 @@ describe('Collaborators endpoints', () => {
             .send({
                 name: 'Test',
                 surname: 'Example',
-                secondsurname: 'Sample',
+                secondSurname: 'Sample',
                 email: 'test@example.com',
                 nss: '8964296',
                 bloodtype: 'A+',
@@ -60,7 +60,17 @@ describe('Collaborators endpoints', () => {
                 done();
             });
     });
-    it('DELETE /collaborators/employees/{employeeId} Elimina a un colaborador del sistema', done => {
+    it('POST /collaborators/employees Responds with 405 - Test de proteccion a la ruta', (done) => {
+        request(app).post('/collaborators/employees')
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
+                done();
+            });
+    });
+    it('DELETE /collaborators/employees/{employeeId} Responds with 200 - Elimina a un colaborador del sistema', done => {
         request(app).delete(`/collaborators/employees/${newEmployeeId}`)
             .set('token', token)
             .expect('Content-Type', 'application/json; charset=utf-8')
@@ -71,7 +81,17 @@ describe('Collaborators endpoints', () => {
                 done();
             });
     });
-    it('GET /collaborators/employees/{employeeId} Muestra el registro completo de un colaborador', (done) => {
+    it('DELETE /collaborators/employees/{employeeId} Responds with 405 - Test de proteccion a la ruta', done => {
+        request(app).delete(`/collaborators/employees/${newEmployeeId}`)
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
+                done();
+            });
+    });
+    it('GET /collaborators/employees/{employeeId} Responds with 200 - Muestra el registro completo de un colaborador', (done) => {
         request(app).get(`/collaborators/employees/${employeeId}`)
             .set('token', token)
             .expect('Content-type', /json/)
@@ -97,6 +117,16 @@ describe('Collaborators endpoints', () => {
                 // expect(res.body.employee.profile.minAge).to.be.a('number');
                 // expect(res.body.employee.profile.maxAge).to.be.a('number');
                 // expect(res.body.employee.profile.sex).to.be.a('number');
+                done();
+            });
+    });
+    it('GET /collaborators/employees/{employeeId} Responds with 405 - Test de proteccion a la ruta', done => {
+        request(app).get(`/collaborators/employees/${newEmployeeId}`)
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
                 done();
             });
     });

@@ -2,17 +2,19 @@ import {
 	Entity,
 	Column,
 	BeforeInsert,
-	PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
     OneToMany,
+	PrimaryColumn,
+	getRepository,
 } from 'typeorm';
 import { 
     IsString, 
+	IsUUID, 
     Length, 
     validateOrReject 
 } from 'class-validator';
-
+import { v4 as uuidv4 } from 'uuid';
 import Department from 'models/Department.model';
 import LocationProfile from 'models/LocationProfile.model';
 
@@ -24,8 +26,9 @@ interface InewPosition {
 
 @Entity({ name: 'position' })
 export default class Position {
-	@PrimaryGeneratedColumn('increment')
-    id?: number;
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false, unique: true })
 	@IsString()
@@ -38,7 +41,7 @@ export default class Position {
 	description!: string;
 
     @Column({ nullable: true })
-	departmentId?: number
+	departmentId?: string
     @ManyToOne(() => Department, (department) => department.positions, { cascade: true, nullable: false })
 	@JoinColumn({ name: 'departmentId' })
 	department!: Department;
@@ -46,7 +49,7 @@ export default class Position {
     @OneToMany(() => LocationProfile, (profile) => profile.position)
 	locationProfiles?: LocationProfile[];
 
-	public constructor(params: InewPosition) {
+	public constructor(params?: InewPosition) {
 		if (params) {
 			this.name = params.name;
 			this.description = params.description;
@@ -54,12 +57,30 @@ export default class Position {
 		}
 	}
 
+	public async getAllPositions() {
+		const positions = await getRepository(Position)
+			.createQueryBuilder('position')
+			.leftJoinAndSelect('position.department', 'department')
+			.getMany();
+		return this.formatPositions(positions);
+	}
+
+	public formatPositions(positions:Position[]) {
+		let res:any[] = [];
+		positions.forEach(position => {
+			const formatted = {
+				id: position.id,
+				name: position.name,
+				department: position.department.name
+			}
+			res.push(formatted);
+		});
+		return res;
+	}
+	
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this);
-		} catch(e) {
-			return e
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

@@ -8,11 +8,14 @@ import {
     getRepository,
 } from 'typeorm';
 import { 
+    IsOptional,
     IsUUID, 
 	Length, 
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import { version as uuidVersion } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 import bcrypt from 'bcrypt';
 
 import PartnerContact from 'models/PartnerContact.model';
@@ -57,7 +60,7 @@ export default class Partner extends BaseEntity {
 	email?: string;
 
     @Column({ type: 'varchar', length: 50, nullable: true, unique: false })
-	@Length(3, 30)
+	@IsOptional()
 	password?: string;
 
     @OneToMany(() => PartnerContact, (contact) => contact.partner)
@@ -77,6 +80,7 @@ export default class Partner extends BaseEntity {
 
     // TODO agregar validacion de no service (regla de negocio)
     public async getPartner(partnerId:string) {
+        if(!(uuidValidate(partnerId) && uuidVersion(partnerId) === 4)) throw Error('No partner')
         const query = await getRepository(Partner)
             .createQueryBuilder('partner')
             .leftJoinAndSelect('partner.contacts', 'contacts')
@@ -121,11 +125,7 @@ export default class Partner extends BaseEntity {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-            this.id = uuidv4();
-			await validateOrReject(this);
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

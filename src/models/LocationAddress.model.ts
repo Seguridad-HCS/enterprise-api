@@ -1,16 +1,17 @@
 import { 
-    Entity, 
-    PrimaryGeneratedColumn, 
+    Entity,
     Column, 
-    BeforeInsert 
+    BeforeInsert, 
+	PrimaryColumn
 } from 'typeorm'
 import { 
     IsOptional, 
     IsString, 
+	IsUUID, 
     Length, 
     validateOrReject 
 } from 'class-validator'
-
+import { v4 as uuidv4 } from 'uuid';
 interface IaddressData {
 	street: string
 	outNumber: string
@@ -23,8 +24,9 @@ interface IaddressData {
 
 @Entity({ name: 'location_address' })
 export default class LocationAddress {
-	@PrimaryGeneratedColumn('increment')
-	id?: number
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false })
 	@IsString()
@@ -73,13 +75,10 @@ export default class LocationAddress {
 			this.zip = params.zip
 		}
 	}
-
+	
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this)
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

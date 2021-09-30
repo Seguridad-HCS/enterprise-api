@@ -58,6 +58,16 @@ describe('Endpoints de locaciones para colaboradores', () => {
                 done();
             });
     });
+    it('POST /collaborators/locations Responds with 405 - Test de proteccion a la ruta', done => {
+        request(app).post(`/collaborators/locations`)
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
+                done();
+            });
+    });
     it('DELETE /collaborators/locations/<locationId> Responds with 200 - Eliminar una ubicacion sin colaboradores', (done) => {
         request(app).delete(`/collaborators/locations/${testLocationId}`)
             .set('token', token)
@@ -66,6 +76,16 @@ describe('Endpoints de locaciones para colaboradores', () => {
             .end((err, res) => {
                 if(err) return done(err);
                 expect(res.body.server).eql('Locacion eliminada');
+                done();
+            });
+    });
+    it('DELETE /collaborators/locations/<locationId> Responds with 405 - Test de proteccion a la ruta', done => {
+        request(app).delete(`/collaborators/locations/${testLocationId}`)
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
                 done();
             });
     });
@@ -121,7 +141,7 @@ describe('Endpoints de locaciones para colaboradores', () => {
                 expect(res.body.location.id).to.be.a('number');
                 expect(res.body.location.name).to.be.a('string');
                 expect(res.body.location.status).to.be.a('boolean');
-                expect(res.body.location.service).to.be.not.undefined;
+                expect(res.body.location.serviceId).to.be.not.undefined;
                 expect(res.body.location.address).to.be.a('object');
                 expect(res.body.location.profiles).to.be.an('array');
                 done();

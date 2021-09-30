@@ -1,9 +1,10 @@
 exec_test:
+	docker-compose -f docker-compose.test.yml down
+	sudo rm -rf test_db
 	docker-compose -f docker-compose.test.yml up -d
 	npm run seed
 	npm test
 	docker-compose -f docker-compose.test.yml down
-	rm -rf test
 exec_clear:
 	sudo rm -rf data
 	rm -rf dist

@@ -1,12 +1,14 @@
 import { 
     Entity, 
-    PrimaryGeneratedColumn, 
     Column, 
-    BeforeInsert 
-} from 'typeorm'
+    BeforeInsert, 
+	PrimaryColumn
+} from 'typeorm';
 import {
+	IsUUID,
     validateOrReject 
-} from 'class-validator'
+} from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IservicefileData {
 	file: string;
@@ -14,8 +16,9 @@ interface IservicefileData {
 
 @Entity({ name: 'Service' })
 export default class Service {
-	@PrimaryGeneratedColumn('increment')
-	id?: number
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'boolean', nullable: false, default: false })
 	lock?: boolean
@@ -31,10 +34,7 @@ export default class Service {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this)
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

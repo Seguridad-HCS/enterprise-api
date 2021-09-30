@@ -12,7 +12,6 @@ export default async(req:Request, res:Response) => {
         });
     } catch(e) {
         if(e instanceof Error) {
-            console.trace(e);
             res.status(500).json({
                 server: 'Error interno en el servidor'
             });

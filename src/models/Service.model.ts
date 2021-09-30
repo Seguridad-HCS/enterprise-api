@@ -5,14 +5,16 @@ import {
     BeforeInsert, 
     OneToOne,
     JoinColumn,
-    OneToMany
+    OneToMany,
+	PrimaryColumn
 } from 'typeorm';
-import { 
-    IsOptional, 
+import {
     IsString, 
+	IsUUID, 
     Length, 
     validateOrReject 
 } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 
 import ServiceFile from 'models/ServiceFile.model';
 import Location from 'models/Location.model';
@@ -20,10 +22,11 @@ import Location from 'models/Location.model';
 interface IserviceData {
 }
 
-@Entity({ name: 'Service' })
+@Entity({ name: 'service' })
 export default class Service {
-	@PrimaryGeneratedColumn('increment')
-	id?: number
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false })
 	@IsString()
@@ -55,7 +58,7 @@ export default class Service {
 	pdfAddressProof?: ServiceFile;
 
     @Column({ nullable: true })
-	pdfIneId?: number
+	pdfIneId?: string
 	@OneToOne(() => ServiceFile, { cascade: true, nullable: true })
 	@JoinColumn({ name: 'pdfIne' })
 	pdfIne?: ServiceFile;
@@ -71,10 +74,7 @@ export default class Service {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this)
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

@@ -2,19 +2,21 @@ import {
 	Entity,
 	Column,
 	BeforeInsert,
-	PrimaryGeneratedColumn,
 	OneToMany,
     OneToOne,
     JoinColumn,
 	getRepository,
 	BaseEntity,
 	ManyToOne,
+	PrimaryColumn,
 } from 'typeorm';
 import { 
 	IsString, 
+	IsUUID, 
 	Length, 
 	validateOrReject 
 } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 
 import LocationAddress from 'models/LocationAddress.model';
 import LocationProfile from 'models/LocationProfile.model';
@@ -34,11 +36,11 @@ interface Ilocation {
 }
 
 interface ImultipleLocations {
-    id: number;
+    id: string;
     name: string;
     owner: string;
     address: {
-        id: number;
+        id: string;
         municipality: string;
         state: string;
     }
@@ -50,8 +52,9 @@ interface ImultipleLocations {
 
 @Entity({ name: 'location' })
 export default class Location extends BaseEntity {
-	@PrimaryGeneratedColumn('increment')
-    id?: number;
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'varchar', length: 30, nullable: false, unique: true })
 	@IsString()
@@ -68,7 +71,7 @@ export default class Location extends BaseEntity {
 	status?: boolean;
 
     @Column({ nullable: true })
-	addressId?: number
+	addressId?: string
 	@OneToOne(() => LocationAddress, { cascade: true, nullable: false })
 	@JoinColumn({ name: 'addressId' })
 	address?: LocationAddress;
@@ -84,12 +87,13 @@ export default class Location extends BaseEntity {
 		}
 	}
 
-	public async getLocation(locationId:number) {
+	public async getLocation(locationId:string) {
 		const location = await getRepository(Location)
         	.createQueryBuilder('location')
 			.select(['location', 'employees.id', 'employees.name', 'employees.surname', 'employees.secondSurname', 'employees.baseWage'])
         	.leftJoinAndSelect('location.address', 'address')
         	.leftJoinAndSelect('location.profiles', 'profiles')
+			.leftJoinAndSelect('location.service', 'service')
 			.leftJoinAndSelect('profiles.position', 'position')
 			.leftJoinAndSelect('position.department', 'department')
         	.leftJoin('profiles.employees', 'employees')
@@ -108,6 +112,8 @@ export default class Location extends BaseEntity {
 		this.name = location.name;
 		this.service = location.service;
 		this.status = location.status;
+		this.serviceId = location.serviceId;
+		this.service = location.service;
 		this.addressId = location.addressId;
 		this.address = location.address;
 		this.profiles = location.profiles;
@@ -115,7 +121,7 @@ export default class Location extends BaseEntity {
 		return {
 			id: this.id,
 			name: this.name,
-			service: this.service,
+			serviceId: this.serviceId,
 			status: this.status,
 			address: this.address,
 			profiles: this.profiles
@@ -162,10 +168,7 @@ export default class Location extends BaseEntity {
 
 	@BeforeInsert()
 	async validateModel() {
-		try {
-			await validateOrReject(this);
-		} catch(e) {
-			return e;
-		}
+		this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

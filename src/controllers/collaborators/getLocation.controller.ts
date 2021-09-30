@@ -4,7 +4,7 @@ import Location from 'models/Location.model';
 export default async (req: Request, res: Response) => {
     try {
         const location = new Location();
-        const data = await location.getLocation(parseInt(req.params.locationId));
+        const data = await location.getLocation(req.params.locationId);
         res.status(200).json({ location:data })
     } catch (e) {
         if (e instanceof Error) res.status(500).json({

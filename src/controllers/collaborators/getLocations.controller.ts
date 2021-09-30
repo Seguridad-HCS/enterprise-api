@@ -14,7 +14,6 @@ export default async(req:Request, res:Response) => {
             locations: query
         });
     } catch(e) {
-        console.log(e);
         res.status(500).json({server: 'Error en el server'})
     }
 }

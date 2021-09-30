@@ -17,8 +17,6 @@ export default async(req:Request, res:Response) => {
             res.status(500).json({
                 server: 'Error en el server'
             });
-            console.log(e);
-            console.log('Error en el server');
         }
     }
 }

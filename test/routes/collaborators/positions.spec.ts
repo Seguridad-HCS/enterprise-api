@@ -28,25 +28,26 @@ describe('Endpoint para finalizar sesion de colaboradores', () => {
         getConnection().close();
         done();
     });
-    it('POST /collaborators/auth/logout Responds with 200 - Sesion finalizada exitosamente', (done) => {
-        request(app).post('/collaborators/auth/logout')
+    it('GET /collaborators/employees/positions Responds with 200 - Muestra a las posiciones disponibles en el sistema', (done) => {
+        request(app).get('/collaborators/employees/positions')
             .set('token', token)
             .expect('Content-type', /json/)
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body.server).to.equal('Sesion finalizada');
+                expect(res.body.server).to.equal('Listado de posiciones');
+                expect(res.body.positions).to.be.an('array');
+                res.body.positions.forEach((location:any) => {
+                    expect(location.id).to.be.a('string');
+                    expect(location.name).to.be.a('string');
+                    expect(location.department).to.be.a('string');
+                });
                 done();
             });
     });
-    it('POST /collaborators/auth/logout Responds with 501 - Test de proteccion a la ruta', (done) => {
-        request(app).post('/collaborators/auth/logout')
+    it('GET /collaborators/employees/positions Responds with 405 - El usuario no esta autenticado', (done) => {
+        request(app).get('/collaborators/employees/positions')
             .expect('Content-type', /json/)
-            .expect(405)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(res.body.server).to.equal('Token corrupto');
-                done();
-            });
+            .expect(405, done);
     });
 });

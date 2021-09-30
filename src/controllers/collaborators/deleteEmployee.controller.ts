@@ -11,7 +11,10 @@ export default async(req:Request, res:Response) => {
         });
     } catch(e) {
         if(e instanceof Error) {
-            res.status(500).json({
+            if(e.message === 'No employee') res.status(404).json({
+                server: 'Empleado no encontrado'
+            });
+            else res.status(500).json({
                 server: 'Error onterno en el servidor'
             });
         }

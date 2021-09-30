@@ -2,19 +2,21 @@ import {
 	Entity,
 	Column,
 	BeforeInsert,
-	PrimaryGeneratedColumn,
     JoinColumn,
     ManyToOne,
     OneToMany,
     Check,
     BaseEntity,
     getRepository,
+    PrimaryColumn,
 } from 'typeorm';
 import {  
+    IsUUID,
     Max, 
     Min, 
 	validateOrReject 
 } from 'class-validator';
+import { v4 as uuidv4 } from 'uuid';
 
 import Position from 'models/Position.model';
 import Employee from 'models/Employee.model';
@@ -29,15 +31,16 @@ interface IlocationProfile {
     maxWage: number;
     sex: boolean | undefined;
     location: Location;
-    position: Position | number;
+    position: Position;
 }
 
 @Entity({ name: 'location_profile' })
 @Check('"minAge" < "maxAge"')
 @Check('"minWage" < "maxWage"')
 export default class LocationProfile extends BaseEntity {
-	@PrimaryGeneratedColumn('increment')
-    id?: number;
+	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
+    @IsUUID()
+    id?: string;
 
 	@Column({ type: 'smallint', nullable: false })
     @Min(1)
@@ -65,13 +68,13 @@ export default class LocationProfile extends BaseEntity {
     sex?: boolean;
 
     @Column({ nullable: true })
-	locationId?: number
+	locationId?: string
     @ManyToOne(() => Location, (location) => location.profiles, { nullable: false })
 	@JoinColumn({ name: 'locationId' })
 	location?: Location;
 
     @Column({ nullable: true })
-	positionId?: number
+	positionId?: string
     @ManyToOne(() => Position, (position) => position.locationProfiles)
 	@JoinColumn({ name: 'positionId' })
 	position?: Position;
@@ -135,10 +138,7 @@ export default class LocationProfile extends BaseEntity {
 
 	@BeforeInsert()
 	async validateModel() {
-        try {
-            await validateOrReject(this);
-        } catch(e) {
-            return e;
-        }
+        this.id = uuidv4();
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

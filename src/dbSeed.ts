@@ -163,7 +163,7 @@ const seed = async () => {
 
         return;
     } catch (e) {
-        console.trace(e);
+        console.log(e);
     }
 }
 

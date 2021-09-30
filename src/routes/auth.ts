@@ -12,6 +12,6 @@ const router = Router();
 router.post('/login', login);
 router.post('/logout', verifyToken, logout);
 router.post('/reboot', rebootPassword);
-router.post('/recover', recoverPassword);
+router.put('/recover', recoverPassword);
 
 export default router;
