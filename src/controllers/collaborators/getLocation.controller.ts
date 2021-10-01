@@ -7,8 +7,13 @@ export default async (req: Request, res: Response) => {
         const data = await location.getLocation(req.params.locationId);
         res.status(200).json({ location:data })
     } catch (e) {
-        if (e instanceof Error) res.status(500).json({
-            server: e.message
-        });
+        if (e instanceof Error) {
+            if(e.message === 'No location') res.status(404).json({
+                server: 'Locacion no encontrada'
+            });
+            else res.status(500).json({
+                server: 'Error interno en el servidor'
+            });
+        }
     }
 }

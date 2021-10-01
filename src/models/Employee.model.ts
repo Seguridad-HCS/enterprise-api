@@ -105,7 +105,7 @@ export default class Employee extends BaseEntity {
 	@Column({ type: 'integer', nullable: false })
 	baseWage?: number;
 
-	@Column({ nullable: true })
+	@Column({ nullable: false })
 	locationProfileId?: string
     @ManyToOne(() => LocationProfile, (profile) => profile.employees)
 	@JoinColumn({ name: 'locationProfileId' })
@@ -211,6 +211,6 @@ export default class Employee extends BaseEntity {
 	@BeforeInsert()
 	async validateModel() {
 		this.id = uuidv4();
-		await validateOrReject(this, { validationError: { value: true, target: true } });
+		await validateOrReject(this, { validationError: { value: true, target: false } });
 	}
 }

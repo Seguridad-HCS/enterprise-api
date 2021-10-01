@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Endpoints generados para recuperar una cuenta de tipo colaborador', () => {
+describe('Pruebas para el endoint /collaborators/auth/recover - reboot', () => {
     before(done => {
         dbConnection().then(() => done());
     });

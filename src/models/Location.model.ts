@@ -17,6 +17,8 @@ import {
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import { version as uuidVersion } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 
 import LocationAddress from 'models/LocationAddress.model';
 import LocationProfile from 'models/LocationProfile.model';
@@ -40,7 +42,6 @@ interface ImultipleLocations {
     name: string;
     owner: string;
     address: {
-        id: string;
         municipality: string;
         state: string;
     }
@@ -88,6 +89,7 @@ export default class Location extends BaseEntity {
 	}
 
 	public async getLocation(locationId:string) {
+		if(!(uuidValidate(locationId) && uuidVersion(locationId) === 4)) throw Error('No location');
 		const location = await getRepository(Location)
         	.createQueryBuilder('location')
 			.select(['location', 'employees.id', 'employees.name', 'employees.surname', 'employees.secondSurname', 'employees.baseWage'])
@@ -146,7 +148,6 @@ export default class Location extends BaseEntity {
 				name: location.name!,
 				owner: location.service ? 'Servicio externo' : 'Seguridad HCS',
 				address: {
-					id: location.address!.id!,
 					municipality: location.address!.municipality,
 					state: location.address!.state
 				},

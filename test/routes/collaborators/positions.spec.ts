@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Endpoint para finalizar sesion de colaboradores', () => {
+describe('Pruebas para el endoint /collaborators/employees/positions', () => {
     let token:string;
     const userData = {
         email: 'oscarmartinez1998lol@gmail.com',

@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Endpoints para el manejo de colaboradores', () => {
+describe('Pruebas para el endoint /collaborators/partners', () => {
     let token:string;
     let partnerId:string;
     const userData = {
@@ -46,6 +46,30 @@ describe('Endpoints para el manejo de colaboradores', () => {
                 if (err) return done(err);
                 expect(res.body.server).to.equal('Socio creado');
                 partnerId = res.body.partner.id;
+                done();
+            });
+    });
+    it('POST /collaborators/partners Responds with 400 - Error en el input', (done) => {
+        request(app).post('/collaborators/partners')
+            .set('token', token)
+            .send({
+                nane: 'Oxxo',
+                legalName: 'Abarrotes corporativos Oxxo S.a. de C.V.',
+                rfc: 'MAVO980605',
+                representative: 'Oscar Martinez Vazquez',
+                email: 'oscarmartinez1998@hotmail.es',
+                phoneNumber: '+525536593166'
+            })
+            .expect('Content-type', /json/)
+            .expect(400, done);
+    });
+    it('GET /collaborators/partners Responds with 405 - Test de proteccion a la ruta', done => {
+        request(app).post(`/collaborators/partners`)
+            .expect('Content-type', /json/)
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
                 done();
             });
     });

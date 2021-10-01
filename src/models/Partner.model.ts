@@ -36,30 +36,31 @@ export default class Partner extends BaseEntity {
     id?: string;
 
 	@Column({ type: 'varchar', length: 50, nullable: false, unique: true })
-	@Length(3, 30)
+	@Length(3, 50)
 	name?: string;
 
-    @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
-	@Length(3, 30)
+    @Column({ type: 'varchar', length: 80, nullable: false, unique: true })
+	@Length(3, 80)
 	legalName?: string;
 
-    @Column({ type: 'varchar', length: 50, nullable: false, unique: false })
+    @Column({ type: 'varchar', length: 30, nullable: false, unique: false })
 	@Length(3, 30)
 	rfc?: string;
 
     @Column({ type: 'varchar', length: 50, nullable: false, unique: false })
-	@Length(3, 30)
+	@Length(3, 50)
 	representative?: string;
 
-    @Column({ type: 'varchar', length: 50, nullable: true, unique: false })
+    @Column({ type: 'varchar', length: 30, nullable: true, unique: false })
 	@Length(3, 30)
 	phoneNumber?: string;
 
-    @Column({ type: 'varchar', length: 50, nullable: true, unique: false })
+    @Column({ type: 'varchar', length: 30, nullable: true, unique: false })
 	@Length(3, 30)
 	email?: string;
 
-    @Column({ type: 'varchar', length: 50, nullable: true, unique: false })
+    @Column({ type: 'varchar', length: 30, nullable: true, unique: false })
+    @Length(3, 30)
 	@IsOptional()
 	password?: string;
 

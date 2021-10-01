@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 const app = createServer();
 
-describe('Endpoint de inicio de sesion para colaboradores', () => {
+describe('Pruebas para el endoint /collaborators/auth/login', () => {
     before(async() => await dbConnection());
     after(async() => await getConnection().close());
     it('POST /collaborators/auth/login Responds with 200 - Credenciales correctas', (done) => {

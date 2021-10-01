@@ -13,8 +13,10 @@ export default async(req:Request, res:Response) => {
         });
     } catch(e) {
         if(e instanceof Error) {
-            console.log(e);
-            res.status(500).json({
+            if(e.message === 'No location') res.status(404).json({
+                server: 'Locacion no encontrada'
+            });
+            else res.status(500).json({
                 server: 'Error en el server'
             });
         }

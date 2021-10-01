@@ -10,12 +10,12 @@ export default async(req:Request, res:Response) => {
                 profile
             }))
             .catch(err => {
-                if(err.code === '22P02') res.status(404).json({
-                    server: 'Relaciones externas no encontradas'
+                if(['22P02', '23502'].includes(err.code)) res.status(404).json({
+                    server: 'Llaves foraneas invalidas o incorrectas'
                 });
                 else res.status(500).json({
                     server: 'Error en la base de datos'
-                })
+                });
             });
     } catch(e) {
         if(e instanceof Error) {

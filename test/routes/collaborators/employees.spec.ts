@@ -10,7 +10,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('Collaborators endpoints', () => {
+describe('Pruebas para los endoints /collaborators/employees', () => {
     let token:string;
     let employeeId:string;
     let newEmployeeId:string;
@@ -35,7 +35,7 @@ describe('Collaborators endpoints', () => {
         getConnection().close();
         done();
     });
-    it('POST /collaborators/employees Registra un nuevo empleado en el sistema', (done) => {
+    it('POST /collaborators/employees Responds with 200 - Registra un nuevo empleado en el sistema', (done) => {
         // TODO especificar el objeto que se recibe
         request(app).post('/collaborators/employees/')
             .set('token', token)
@@ -59,6 +59,26 @@ describe('Collaborators endpoints', () => {
                 newEmployeeId = res.body.employee.id;
                 done();
             });
+    });
+    it('POST /collaborators/employees Responds with 400 - Error en el input', (done) => {
+        // TODO especificar el objeto que se recibe
+        request(app).post('/collaborators/employees/')
+            .set('token', token)
+            .send({
+                name: 'Test',
+                zurname: 'Example',
+                secondSurname: 'Sample',
+                email: 'test@example.com',
+                nss: '8964296',
+                bloodtype: 'A+',
+                rfc: 'MAVO980605',
+                birthDate: '05-06-1998',
+                sex: true,
+                baseWage: 4500000,
+                locationProfileId: 1
+            })
+            .expect('Content-Type', 'application/json; charset=utf-8')
+            .expect(400, done)
     });
     it('POST /collaborators/employees Responds with 405 - Test de proteccion a la ruta', (done) => {
         request(app).post('/collaborators/employees')

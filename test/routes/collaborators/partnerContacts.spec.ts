@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Endpoint para finalizar sesion de colaboradores', () => {
+describe('Pruebas para el endoint /collaborators/partners/contacts', () => {
     let token:string;
     let partnerId:string;
     let contactId:number;
@@ -58,18 +58,13 @@ describe('Endpoint para finalizar sesion de colaboradores', () => {
                 expect(res.body.contact.phoneNumber).to.be.a('string');
                 expect(res.body.contact.email).to.be.a('string');
                 expect(res.body.contact.partnerId).to.be.a('string');
-                expect(res.body.contact.id).to.be.a('number');
+                expect(res.body.contact.id).to.be.a('string');
                 done();
             });
     });
-    it('DELETE /collaborators/partners/contacts/{contactId} Responds with 501 - No se pudo acceder a la ruta', (done) => {
+    it('DELETE /collaborators/partners/contacts/{contactId} Responds with 405 - Test de proteccion a la ruta', (done) => {
         request(app).delete(`/collaborators/partners/contacts/${contactId}`)
             .expect('Content-type', /json/)
-            .expect(405)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(res.body.server).to.equal('Token corrupto');
-                done();
-            });
+            .expect(405, done);
     });
 });

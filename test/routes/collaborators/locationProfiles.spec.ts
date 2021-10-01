@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Endpoints de perfiles para locacion para colaboradores', () => {
+describe('Pruebas para los endoints /collaborators/locations/profiles', () => {
     let token:string;
     let locationId:number;
     const userData = {
