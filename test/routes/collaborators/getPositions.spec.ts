@@ -6,10 +6,10 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('Pruebas para el endoint /collaborators/employees/positions', () => {
+describe('GET /collaborators/employees/positions - Ruta para mostrar las posiciones registradas', () => {
     let token:string;
-    const userData = {
-        email: 'oscarmartinez1998lol@gmail.com',
+    const loginData = {
+        email: 'johndoe@gmail.com',
         password: 'test'
     };
     before((done) => {
@@ -17,7 +17,7 @@ describe('Pruebas para el endoint /collaborators/employees/positions', () => {
     });
     beforeEach((done) => {
         request(app).post('/collaborators/auth/login')
-            .send(userData)
+            .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
                 token = res.headers.token;
@@ -28,7 +28,7 @@ describe('Pruebas para el endoint /collaborators/employees/positions', () => {
         getConnection().close();
         done();
     });
-    it('GET /collaborators/employees/positions Responds with 200 - Muestra a las posiciones disponibles en el sistema', (done) => {
+    it('200 - Muestra a las posiciones registradas en el sistema', (done) => {
         request(app).get('/collaborators/employees/positions')
             .set('token', token)
             .expect('Content-type', /json/)
@@ -45,9 +45,14 @@ describe('Pruebas para el endoint /collaborators/employees/positions', () => {
                 done();
             });
     });
-    it('GET /collaborators/employees/positions Responds with 405 - El usuario no esta autenticado', (done) => {
+    it('405 - Test de proteccion a la ruta', (done) => {
         request(app).get('/collaborators/employees/positions')
             .expect('Content-type', /json/)
-            .expect(405, done);
+            .expect(405)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.server).to.equal('Token corrupto');
+                done();
+            });
     });
 });

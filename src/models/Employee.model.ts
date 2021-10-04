@@ -41,6 +41,23 @@ interface newEmployee {
 	locationProfile: LocationProfile;
 }
 
+interface ImultipleEmployees {
+	id: string;
+	name: string;
+	surname: string;
+	secondSurname: string;
+	position: {
+		name?: string;
+		description?: string;
+		department?: string;
+	}
+	location: {
+		id?: string;
+		name?: string;
+		state?: string;
+	}
+}
+
 @Entity({ name: 'employee' })
 @Unique(['name', 'surname', 'secondSurname'])
 export default class Employee extends BaseEntity {
@@ -124,7 +141,7 @@ export default class Employee extends BaseEntity {
 			this.bloodtype = params.bloodtype;
 			this.rfc = params.rfc;
 			this.baseWage = params.baseWage;
-			this.locationProfile = params.locationProfile;
+			typeof(params.locationProfile) === 'string' ? this.locationProfileId = params.locationProfile : this.locationProfile = params.locationProfile;
 		}
 	}
 
@@ -153,8 +170,20 @@ export default class Employee extends BaseEntity {
 		this.rfc = employee.rfc;
 		this.baseWage = employee.baseWage;
 		this.locationProfile = employee.locationProfile;
-
 		return this.formatEmployee();
+	}
+
+	public async getAllEmployees(employeeId:string) {
+		const employee = await getRepository(Employee)
+        	.createQueryBuilder('employee')
+        	.leftJoinAndSelect('employee.locationProfile', 'profile')
+			.leftJoinAndSelect('profile.location', 'location')
+			.leftJoinAndSelect('location.address', 'address')
+        	.leftJoinAndSelect('profile.position', 'position')
+			.leftJoinAndSelect('position.department', 'department')
+        	.where('employee.id != :employeeId', { employeeId })
+        	.getMany();
+		return this.formatEmployees(employee);
 	}
 
 	public formatEmployee() {
@@ -201,7 +230,31 @@ export default class Employee extends BaseEntity {
 				}
 			}
 		}
-	} 
+	}
+
+	public formatEmployees(employees:Employee[]) {
+		const res:Array<ImultipleEmployees> = [];
+		employees.forEach(employee => {
+			const formatted = {
+				id: employee.id!,
+				name: employee.name!,
+				surname: employee.surname!,
+				secondSurname: employee.secondSurname!,
+				position: {
+					name: employee.locationProfile?.position?.name,
+					description: employee.locationProfile?.position?.description,
+					department: employee.locationProfile?.position?.department?.name
+				},
+				location: {
+					id: employee.locationProfile?.location?.id,
+					name: employee.locationProfile?.location?.name,
+					state: employee.locationProfile?.location?.address?.state,
+				}
+			}
+			res.push(formatted);
+		});
+		return res;
+	}
 
 	public setPassword(password:string) {
 		const salt = bcrypt.genSaltSync(10);

@@ -9,7 +9,7 @@ export default async(req:Request, res:Response) => {
     } catch(e) {
         if(e instanceof Error) {
             if(e.message === 'No employee') res.status(404).json({
-                server: 'Empleado no encontrado'
+                server: 'Colaborador no encontrado'
             });
             else res.status(500).json({ 
                 server: 'Error interno en el servidor'

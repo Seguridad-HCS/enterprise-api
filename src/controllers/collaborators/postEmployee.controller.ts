@@ -20,13 +20,15 @@ export default async(req:Request, res:Response) => {
                 if(Array.isArray(err) && err[0] instanceof ValidationError) {
                     const valErrors = removeUndefined(err);
                     res.status(400).json({
-                        server: 'Errores en el input',
+                        server: 'Error en el input',
                         errores: valErrors
                     });
                 }
-                else if(['22P02', '23502'].includes(err.code)) res.status(404).json({
+                else if(['22P02', '23502'].includes(err.code)) {
+                    res.status(404).json({
                     server: 'Llaves foraneas invalidas o incorrectas'
                 });
+                }
                 else res.status(500).json({
                     server: 'Error en la base de datos'
                 });

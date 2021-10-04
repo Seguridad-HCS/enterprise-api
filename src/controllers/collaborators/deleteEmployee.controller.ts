@@ -15,7 +15,7 @@ export default async(req:Request, res:Response) => {
                 server: 'Empleado no encontrado'
             });
             else res.status(500).json({
-                server: 'Error onterno en el servidor'
+                server: 'Error interno en el servidor'
             });
         }
     }

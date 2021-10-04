@@ -19,6 +19,7 @@ import { validate as uuidValidate } from 'uuid';
 import bcrypt from 'bcrypt';
 
 import PartnerContact from 'models/PartnerContact.model';
+import Service from 'models/Service.model';
 
 interface InewPartner {
 	name: string;
@@ -27,6 +28,18 @@ interface InewPartner {
     representative: string;
     phoneNumber: string;
     email: string;
+}
+
+interface ImultiplePartners {
+    id: string;
+    name: string;
+    representative: string;
+    services: Array<IserviceInfo>;
+}
+
+interface IserviceInfo {
+    id?: string;
+    status?: string;
 }
 
 @Entity({ name: 'partner' })
@@ -64,6 +77,9 @@ export default class Partner extends BaseEntity {
 	@IsOptional()
 	password?: string;
 
+    @OneToMany(() => Service, (service) => service.partner)
+	services?: Service[];
+
     @OneToMany(() => PartnerContact, (contact) => contact.partner)
 	contacts?: PartnerContact[];
 
@@ -79,12 +95,24 @@ export default class Partner extends BaseEntity {
 		}
 	}
 
+    public canCreateService() {
+        let flag = true;
+        this.services?.forEach(service => {
+            if(['registro', 'negociacion'].includes(service.status!)) {
+                flag = false;
+                return;
+            }
+        });
+        return flag;
+    }
+
     // TODO agregar validacion de no service (regla de negocio)
     public async getPartner(partnerId:string) {
-        if(!(uuidValidate(partnerId) && uuidVersion(partnerId) === 4)) throw Error('No partner')
+        if(!(uuidValidate(partnerId) && uuidVersion(partnerId) === 4)) throw Error('No partner');
         const query = await getRepository(Partner)
             .createQueryBuilder('partner')
             .leftJoinAndSelect('partner.contacts', 'contacts')
+            .leftJoinAndSelect('partner.services', 'services')
             .where('partner.id = :partnerId', { partnerId })
             .getOne();
         if(query == undefined) throw Error('No partner');
@@ -95,9 +123,18 @@ export default class Partner extends BaseEntity {
         this.representative = query.representative;
         this.phoneNumber = query.phoneNumber;
         this.email = query.email;
-        this.contacts = query.contacts
+        this.contacts = query.contacts;
+        this.services = query.services;
         return this.formatPartner();
     }
+
+    public async getAllPartners() {
+		const partners = await getRepository(Partner)
+			.createQueryBuilder('partner')
+            .leftJoinAndSelect('partner.services', 'services')
+			.getMany();
+		return this.formatPartners(partners);
+	}
 
     public formatPartner() {
         return {
@@ -112,12 +149,28 @@ export default class Partner extends BaseEntity {
         };
     }
 
-    public async getAllPartners() {
-		const partners = await getRepository(Partner)
-			.createQueryBuilder('partner')
-			.getMany();
-		return partners;
-	}
+    public formatPartners(partners:Partner[]) {
+        let res:ImultiplePartners[] = [];
+        partners.forEach(partner => {
+			let formatted:ImultiplePartners = {
+				id: partner.id!,
+				name: partner.name!,
+                representative: partner.representative!,
+                services: []
+			};
+            partner.services?.forEach(service => {
+                if(service.status === 'finalizado') return;
+                else {
+                    formatted.services.push({
+                        id: service.id,
+                        status: service.status
+                    });
+                }
+            });
+			res.push(formatted);
+		});
+        return res;
+    }
 
     public setPassword(password:string) {
 		const salt = bcrypt.genSaltSync(10);

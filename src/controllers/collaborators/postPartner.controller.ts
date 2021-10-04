@@ -18,7 +18,7 @@ export default async(req:Request, res:Response) => {
                 if(Array.isArray(err) && err[0] instanceof ValidationError) {
                     const valErrors = removeUndefined(err);
                     res.status(400).json({
-                        server: 'Errores en el input',
+                        server: 'Error en el input',
                         errores: valErrors
                     });
                 }

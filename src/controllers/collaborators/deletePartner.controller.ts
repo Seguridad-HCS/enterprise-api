@@ -12,7 +12,10 @@ export default async(req:Request, res:Response) => {
         });
     } catch(e) {
         if(e instanceof Error) {
-            res.status(500).json({
+            if(e.message === 'No partner') res.status(404).json({
+                server: 'Socio no encontrado'
+            });
+            else res.status(500).json({
                 server: 'Error interno en el servidor'
             });
         }

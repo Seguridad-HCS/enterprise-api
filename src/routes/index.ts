@@ -5,6 +5,8 @@ import collabLocations from 'routes/locations.routes';
 import collabLocationProfiles from 'routes/locationProfiles.routes';
 import collabEmployees from 'routes/employees.routes';
 import collabPartners from 'routes/partners.routes';
+import collabServices from 'routes/services.routes';
+import collabServiceFiles from 'routes/serviceFiles.routes';
 
 const router = Router();
 
@@ -19,6 +21,8 @@ router.use('/collaborators/locations', collabLocations);
 router.use('/collaborators/locations/profiles', collabLocationProfiles);
 router.use('/collaborators/employees', collabEmployees);
 router.use('/collaborators/partners', collabPartners);
+router.use('/collaborators/services', collabServices);
+router.use('/collaborators/services/files', collabServiceFiles);
 
 // Catch non implemented routes
 router.all('*', (req:Request, res:Response) => {

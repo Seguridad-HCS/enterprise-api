@@ -67,33 +67,126 @@ const devHouse = new Location({
     }
 });
 
+const testOffice = new Location({
+    name: 'Oficina de pruebas',
+    address: {
+        street: 'Alcanfor',
+        outNumber: '#3789',
+        intNumber: '#12',
+        neighborhood: 'Centro Historico',
+        zip: '09980',
+        municipality: 'Tlahuac',
+        state: 'Ciudad de Mexico'
+    }
+});
+
 // Location profiles
-const devHouseProfile = new LocationProfile({
+const devHouseCTOProfile = new LocationProfile({
     total: 1,
     minAge: 18,
     maxAge: 45,
-    price: 3500000,
-    minWage: 300000,
-    maxWage: 500000,
+    price: 35000,
+    minWage: 30000,
+    maxWage: 50000,
     sex: true,
     position: cto,
     location: devHouse
 });
 
+const devHouseDEVProfile = new LocationProfile({
+    total: 5,
+    minAge: 18,
+    maxAge: 45,
+    price: 25000,
+    minWage: 12000,
+    maxWage: 18000,
+    sex: true,
+    position: dev,
+    location: devHouse
+});
+
+const devHouseRECRUITERProfile = new LocationProfile({
+    total: 1,
+    minAge: 18,
+    maxAge: 45,
+    price: 50000,
+    minWage: 35000,
+    maxWage: 45000,
+    sex: undefined,
+    position: recruiter,
+    location: devHouse
+});
+
+const testOfficeCEOProfile = new LocationProfile({
+    total: 1,
+    minAge: 18,
+    maxAge: 45,
+    price: 50000,
+    minWage: 35000,
+    maxWage: 45000,
+    sex: undefined,
+    position: ceo,
+    location: testOffice
+});
+
+const testOfficeRECRUITERProfile = new LocationProfile({
+    total: 1,
+    minAge: 18,
+    maxAge: 45,
+    price: 50000,
+    minWage: 35000,
+    maxWage: 45000,
+    sex: undefined,
+    position: recruiter,
+    location: testOffice
+});
+
 // Employees
 const employee1 = new Employee({
-    name: 'Oscar',
-    surname: 'Martinez',
-    secondSurname: 'Vazquez',
-    email: 'oscarmartinez1998lol@gmail.com',
+    name: 'John',
+    surname: 'Doe',
+    secondSurname: 'Test',
+    email: 'johndoe@gmail.com',
     nss: '8964296',
     bloodtype: 'A+',
-    rfc: 'MAVO980605',
+    rfc: 'MAAVO280605',
+    birthDate: '05-06-1990',
+    sex: true,
+    baseWage: 7000,
+    // image: './public/assets/_testpf1.jpg',
+    locationProfile: devHouseCTOProfile
+});
+employee1.setPassword('test');
+
+const employee2 = new Employee({
+    name: 'Jane',
+    surname: 'Doe',
+    secondSurname: 'Test',
+    email: 'janedoe@gmail.com',
+    nss: '8964296',
+    bloodtype: 'A+',
+    rfc: 'MASVO280605',
+    birthDate: '05-06-1995',
+    sex: true,
+    baseWage: 4500,
+    // image: './public/assets/_testpf1.jpg',
+    locationProfile: devHouseDEVProfile
+});
+employee1.setPassword('test');
+
+const employee3 = new Employee({
+    name: 'Obi',
+    surname: 'Wan',
+    secondSurname: 'Kenobi',
+    email: 'obiwan@gmail.com',
+    nss: '8964296',
+    bloodtype: 'A+',
+    rfc: 'MANAO280605',
     birthDate: '05-06-1998',
     sex: true,
-    baseWage: 4500000,
+    baseWage: 12000,
     // image: './public/assets/_testpf1.jpg',
-    locationProfile: devHouseProfile
+    locationProfile: devHouseDEVProfile
 });
 employee1.setPassword('test');
 
@@ -102,9 +195,17 @@ const partner1 = new Partner({
     name: 'Comex',
     legalName: 'Pinturas Comex S.A. de C.V.',
     rfc: 'MAJO990503Q56',
-    representative: 'Oscar Martinez Vazquez',
-    phoneNumber: '+525536593166',
+    representative: 'Jane Doe Sample',
+    phoneNumber: '+525566339911',
     email: 'partner@example.com'
+});
+const partner2 = new Partner({
+    name: 'Bimbo',
+    legalName: 'Panaderia Bimbo S.A. de C.V.',
+    rfc: 'MANO990503Q56',
+    representative: 'Jon Doe Test',
+    phoneNumber: '+525511663377',
+    email: 'partner@sample.com'
 });
 
 // Partner contacts
@@ -114,6 +215,13 @@ const partnerContact1 = new PartnerContact({
     phoneNumber: '+525558451755',
     email: 'carlos@ejemplo.com',
     partner: partner1
+});
+const partnerContact2 = new PartnerContact({
+    name: 'Roberto Vazquez Perez',
+    role: 'Director ejecutivo',
+    phoneNumber: '+525558451755',
+    email: 'carlos@ejemplo.com',
+    partner: partner2
 });
 
 const seed = async () => {
@@ -141,24 +249,33 @@ const seed = async () => {
         // Create location
         const locRepo = getRepository(Location);
         await locRepo.save(devHouse);
+        await locRepo.save(testOffice);
         console.log('Locaciones creadas');
 
         // Create location profile
         const locProRepo = getRepository(LocationProfile);
-        await locProRepo.save(devHouseProfile);
+        await locProRepo.save(devHouseCTOProfile);
+        await locProRepo.save(devHouseDEVProfile);
+        await locProRepo.save(devHouseRECRUITERProfile);
+        await locProRepo.save(testOfficeCEOProfile);
+        await locProRepo.save(testOfficeRECRUITERProfile);
         console.log('Perfiles para locaciones creadas');
 
         // Create employees
         const empRepo = getRepository(Employee);
         await empRepo.save(employee1);
+        await empRepo.save(employee2);
+        await empRepo.save(employee3);
         console.log('Empleados creados');
 
         const partRepo = getRepository(Partner);
         await partRepo.save(partner1);
+        await partRepo.save(partner2);
         console.log('Socios creados');
 
         const contRepo = getRepository(PartnerContact);
         await contRepo.save(partnerContact1);
+        await contRepo.save(partnerContact2);
         console.log('Contactos creados');
 
         return;

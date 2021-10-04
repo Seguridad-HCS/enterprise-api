@@ -2,7 +2,8 @@ import {
     Entity, 
     Column, 
     BeforeInsert, 
-	PrimaryColumn
+	PrimaryColumn,
+	BaseEntity
 } from 'typeorm';
 import {
 	IsUUID,
@@ -14,8 +15,8 @@ interface IservicefileData {
 	file: string;
 }
 
-@Entity({ name: 'Service' })
-export default class Service {
+@Entity({ name: 'service_file' })
+export default class ServiceFile extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
     id?: string;
@@ -27,6 +28,7 @@ export default class Service {
 	file?: string
 
 	public constructor(params?: IservicefileData) {
+		super();
 		if (params) {
             this.file = params.file;
 		}

@@ -6,8 +6,10 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colaborador', () => {
+describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un socio', () => {
     let token:string;
+    let partnerId:string;
+    let contactId:number;
     const loginData = {
         email: 'johndoe@gmail.com',
         password: 'test'
@@ -21,32 +23,24 @@ describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colabo
             .end((err, res) => {
                 if (err) return done(err);
                 token = res.headers.token;
-                done();
+                // Get some random partnerId 
+                request(app).get('/collaborators/partners')
+                    .set('token', token)
+                    .end((err, res) => {
+                        if (err) return done(err);
+                        partnerId = res.body.partners![0].id;
+                        done();
+                    });
             });
     });
     after((done) => {
         getConnection().close();
         done();
     });
-    it('200 - Sesion finalizada exitosamente', (done) => {
-        request(app).post('/collaborators/auth/logout')
-            .set('token', token)
-            .expect('Content-type', /json/)
-            .expect(200)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(res.body.server).to.equal('Sesion finalizada');
-                done();
-            });
-    });
+    
     it('405 - Test de proteccion a la ruta', (done) => {
-        request(app).post('/collaborators/auth/logout')
+        request(app).delete(`/collaborators/partners/contacts/${contactId}`)
             .expect('Content-type', /json/)
-            .expect(405)
-            .end((err, res) => {
-                if (err) return done(err);
-                expect(res.body.server).to.equal('Token corrupto');
-                done();
-            });
+            .expect(404, done);
     });
 });

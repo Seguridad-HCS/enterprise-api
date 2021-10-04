@@ -69,6 +69,8 @@
  *                    example: Empleado registrado
  *         '401':
  *           description: El token utilizado es corrupto o inexistente
+ *         '404':
+ *           description: Llaves foraneas invalidas o incorrectas
  *         '405':
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:

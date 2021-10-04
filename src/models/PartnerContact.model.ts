@@ -53,7 +53,7 @@ export default class PartnerContact extends BaseEntity{
 
     @Column({ type: 'varchar', nullable: false })
 	partnerId?: string
-    @ManyToOne(() => Partner, (partner) => partner.contacts, { nullable: false })
+    @ManyToOne(() => Partner, (partner) => partner.contacts, { onDelete: 'CASCADE', nullable: false })
 	@JoinColumn({ name: 'partnerId' })
 	partner?: Partner;
 

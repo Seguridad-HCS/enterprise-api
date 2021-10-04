@@ -1,5 +1,7 @@
+import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
 import LocationProfile from 'models/LocationProfile.model';
+import removeUndefined from 'helpers/removeUndefined.helper';
 
 export default async(req:Request, res:Response) => {
     try {
@@ -10,6 +12,13 @@ export default async(req:Request, res:Response) => {
                 profile
             }))
             .catch(err => {
+                if(Array.isArray(err) && err[0] instanceof ValidationError) {
+                    const valErrors = removeUndefined(err);
+                    res.status(400).json({
+                        server: 'Error en el input',
+                        errores: valErrors
+                    });
+                }
                 if(['22P02', '23502'].includes(err.code)) res.status(404).json({
                     server: 'Llaves foraneas invalidas o incorrectas'
                 });

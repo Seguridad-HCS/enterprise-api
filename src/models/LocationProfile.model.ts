@@ -11,12 +11,16 @@ import {
     PrimaryColumn,
 } from 'typeorm';
 import {  
+    IsBoolean,
+    IsOptional,
     IsUUID,
     Max, 
     Min, 
 	validateOrReject 
 } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
+import { version as uuidVersion } from 'uuid';
+import { validate as uuidValidate } from 'uuid';
 
 import Position from 'models/Position.model';
 import Employee from 'models/Employee.model';
@@ -30,8 +34,8 @@ interface IlocationProfile {
     minWage: number;
     maxWage: number;
     sex: boolean | undefined;
-    location: Location;
-    position: Position;
+    location: Location | string;
+    position: Position | string;
 }
 
 @Entity({ name: 'location_profile' })
@@ -57,23 +61,25 @@ export default class LocationProfile extends BaseEntity {
     @Column({ type: 'integer', nullable: true })
     price?: number;
 
-    @Column({ type: 'integer', nullable: true })
+    @Column({ type: 'integer', nullable: false })
     @Min(0)
     minWage?: number;
 
-    @Column({ type: 'integer', nullable: true })
+    @Column({ type: 'integer', nullable: false })
     maxWage?: number;
 
-    @Column({ type: 'boolean' })
+    @Column({ type: 'boolean', nullable: true })
+    @IsBoolean()
+    @IsOptional()
     sex?: boolean;
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
 	locationId?: string
-    @ManyToOne(() => Location, (location) => location.profiles, { nullable: false })
+    @ManyToOne(() => Location, (location) => location.profiles, { onDelete: 'CASCADE', nullable: false })
 	@JoinColumn({ name: 'locationId' })
 	location?: Location;
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
 	positionId?: string
     @ManyToOne(() => Position, (position) => position.locationProfiles)
 	@JoinColumn({ name: 'positionId' })
@@ -92,12 +98,13 @@ export default class LocationProfile extends BaseEntity {
             this.sex = params.sex;
             this.minWage = Math.round(params.minWage * 100);
             this.maxWage = Math.round(params.maxWage * 100);
-            typeof(params.position) === 'number' ? this.positionId = params.position : this.position = params.position;
-            typeof(params.location) === 'number' ? this.locationId = params.location : this.location = params.location;
+            typeof(params.position) === 'string' ? this.positionId = params.position : this.position = params.position;
+            typeof(params.location) === 'string' ? this.locationId = params.location : this.location = params.location;
 		}
 	}
 
-    public async getLocationProfile(profileId:number) {
+    public async getLocationProfile(profileId:string) {
+        if(!(uuidValidate(profileId) && uuidVersion(profileId) === 4)) throw Error('No location profile');
 		const profile = await getRepository(LocationProfile)
         	.createQueryBuilder('profile')
             .leftJoinAndSelect('profile.position', 'position')

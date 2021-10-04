@@ -6,13 +6,13 @@ import { expect } from 'chai';
 
 const app = createServer();
 
-describe('Pruebas para el endoint /collaborators/auth/login', () => {
+describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradores', () => {
     before(async() => await dbConnection());
     after(async() => await getConnection().close());
-    it('POST /collaborators/auth/login Responds with 200 - Credenciales correctas', (done) => {
+    it('200 - Credenciales correctas', (done) => {
         request(app).post('/collaborators/auth/login')
             .send({
-                email: 'oscarmartinez1998lol@gmail.com',
+                email: 'johndoe@gmail.com',
                 password: 'test'
             })
             .expect('Content-type',/json/)
@@ -25,10 +25,10 @@ describe('Pruebas para el endoint /collaborators/auth/login', () => {
                 done();
             });
     });
-    it('POST /collaborator/auth/login Responds with 404 - Email incorrecto', (done) => {
+    it('404 - Email incorrecto', (done) => {
         request(app).post('/collaborators/auth/login')
             .send({
-                email: 'test@gmail.com',
+                email: 'johndoe@gmail.mx',
                 password: 'test'
             })
             .expect('Content-type',/json/)
@@ -40,11 +40,11 @@ describe('Pruebas para el endoint /collaborators/auth/login', () => {
                 done();
             });
     });
-    it('POST /collaborators/auth/login Responds with 404 - Password incorrecto', (done) => {
+    it('404 - Password incorrecto', (done) => {
         request(app).post('/collaborators/auth/login')
             .send({
-                email: 'oscarmartinez1998lol@gmail.com',
-                password: 'testa'
+                email: 'johndoe@gmail.mx',
+                password: 'testtest'
             })
             .expect('Content-type',/json/)
             .expect(404)
@@ -55,7 +55,7 @@ describe('Pruebas para el endoint /collaborators/auth/login', () => {
                 done();
             });
     });
-    it('POST /collaborators/auth/login Responds with 404 - Inyeccion SQL', (done) => {
+    it('404 - Inyeccion SQL', (done) => {
         request(app).post('/collaborators/auth/login')
             .send({
                 email: ' or "1"="1"',
