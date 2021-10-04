@@ -8,16 +8,15 @@ const app = createServer();
 
 describe('DELETE /collaborators/partners - Ruta para eliminar a un socio', () => {
     let token:string;
-    let partnerId:string;
+    let partnerWithServices:string;
+    let partnerWithoutServices:string;
     const loginData = {
         email: 'johndoe@gmail.com',
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
@@ -29,17 +28,21 @@ describe('DELETE /collaborators/partners - Ruta para eliminar a un socio', () =>
                     .expect(200)
                     .end((err, res) => {
                         if (err) return done(err);
-                        partnerId = res.body.partners[0].id;
+                        res.body.partners.forEach((partner:any) => {
+                            if(partner.services.length > 0) partnerWithServices = partner.id;
+                            else partnerWithoutServices = partner.id;
+                        });
                         done();
                     });
             });
+        });
     });
     after((done) => {
         getConnection().close();
         done();
     });
     it('200 - Elimina a un socio del sistema', done => {
-        request(app).delete(`/collaborators/partners/${partnerId}`)
+        request(app).delete(`/collaborators/partners/${partnerWithoutServices}`)
             .set('token', token)
             .expect('Content-type', 'application/json; charset=utf-8')
             .expect(200)
@@ -60,8 +63,19 @@ describe('DELETE /collaborators/partners - Ruta para eliminar a un socio', () =>
                 done();
             });
     });
+    it('405 - No se puede eliminar un socio con servicios asociados', done => {
+        request(app).delete(`/collaborators/partners/${partnerWithServices}`)
+            .set('token', token)
+            .expect('Content-type', 'application/json; charset=utf-8')
+            .expect(405)
+            .end((err, res) => {
+                if(err) return done(err);
+                expect(res.body.server).to.equal('No se puede eliminar un socio con servicios asociados');
+                done();
+            });
+    });
     it('405 - Test de proteccion a la ruta', (done) => {
-        request(app).delete(`/collaborators/partners/${partnerId}`)
+        request(app).delete(`/collaborators/partners/${partnerWithServices}`)
             .expect('Content-type', /json/)
             .expect(405)
             .end((err, res) => {

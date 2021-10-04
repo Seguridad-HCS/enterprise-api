@@ -14,10 +14,8 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
@@ -31,6 +29,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
                         done();
                     });
             });
+        });
     });
     after((done) => {
         getConnection().close();
@@ -62,7 +61,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
             .expect(404)
             .end((err, res) => {
                 if(err) return done(err);
-                expect(res.body.server).to.equal('Socio no encontrado');
+                expect(res.body.server).to.equal('Servicio no encontrado');
                 done();
             });
     });

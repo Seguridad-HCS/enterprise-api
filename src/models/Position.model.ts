@@ -7,6 +7,7 @@ import {
     OneToMany,
 	PrimaryColumn,
 	getRepository,
+	BaseEntity,
 } from 'typeorm';
 import { 
     IsString, 
@@ -25,7 +26,7 @@ interface InewPosition {
 }
 
 @Entity({ name: 'position' })
-export default class Position {
+export default class Position extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
     id?: string;
@@ -50,6 +51,7 @@ export default class Position {
 	locationProfiles?: LocationProfile[];
 
 	public constructor(params?: InewPosition) {
+		super();
 		if (params) {
 			this.name = params.name;
 			this.description = params.description;

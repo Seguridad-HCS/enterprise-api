@@ -14,10 +14,8 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
@@ -31,6 +29,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
                         done();
                     });
             });
+        });
     });
     after((done) => {
         getConnection().close();

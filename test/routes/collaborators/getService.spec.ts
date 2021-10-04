@@ -6,9 +6,9 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/partners - Ruta para mostrar un socio en especifico', () => {
+describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servicio en especifico', () => {
     let token:string;
-    let partnerId:string;
+    let serviceId:string;
     const loginData = {
         email: 'johndoe@gmail.com',
         password: 'test'
@@ -27,7 +27,9 @@ describe('GET /collaborators/partners - Ruta para mostrar un socio en especifico
                     .expect(200)
                     .end((err, res) => {
                         if (err) return done(err);
-                        partnerId = res.body.partners[0].id;
+                        const partnerWithService = res.body.partners.find((partner:any) => partner.services.length > 0);
+                        serviceId = partnerWithService.services[0].id;
+                        console.log(serviceId);
                         done();
                     });
             });
@@ -37,37 +39,29 @@ describe('GET /collaborators/partners - Ruta para mostrar un socio en especifico
         getConnection().close();
         done();
     });
-    it('200 - Muestra el registro completo de un socio', done => {
-        request(app).get(`/collaborators/partners/${partnerId}`)
+    it('200 - Muestra el registro completo de un servicio', done => {
+        request(app).get(`/collaborators/services/${serviceId}`)
             .set('token', token)
             .expect('Content-type', 'application/json; charset=utf-8')
             .expect(200)
             .end((err, res) => {
                 if(err) return done(err);
-                expect(res.body.partner.id).to.be.a('string');
-                expect(res.body.partner.name).to.be.a('string');
-                expect(res.body.partner.legalName).to.be.a('string');
-                expect(res.body.partner.rfc).to.be.a('string');
-                expect(res.body.partner.representative).to.be.a('string');
-                expect(res.body.partner.phoneNumber).to.be.a('string');
-                expect(res.body.partner.email).to.be.a('string');
-                expect(res.body.partner.contacts).to.be.an('array');
                 done();
             });
     });
-    it('404 - El socio no fue encontrado', done => {
-        request(app).get(`/collaborators/partners/1`)
+    it('404 - El servicio no fue encontrado', done => {
+        request(app).get(`/collaborators/services/thisisatest`)
             .set('token', token)
             .expect('Content-type', 'application/json; charset=utf-8')
             .expect(404)
             .end((err, res) => {
                 if(err) return done(err);
-                expect(res.body.server).to.equal('Socio no encontrado');
+                expect(res.body.server).to.equal('Servicio no encontrado');
                 done();
             });
     });
     it('405 - Test de proteccion a la ruta', (done) => {
-        request(app).get(`/collaborators/partners/${partnerId}`)
+        request(app).get(`/collaborators/services/${serviceId}`)
             .expect('Content-type', /json/)
             .expect(405)
             .end((err, res) => {

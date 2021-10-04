@@ -4,6 +4,7 @@ import {
 	BeforeInsert,
 	OneToMany,
 	PrimaryColumn,
+	BaseEntity,
 } from 'typeorm';
 import { 
 	IsString, 
@@ -20,7 +21,7 @@ interface InewDepartment {
 }
 
 @Entity({ name: 'department' })
-export default class Department {
+export default class Department extends BaseEntity {
 	@PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
     @IsUUID()
     id?: string;
@@ -39,6 +40,7 @@ export default class Department {
 	positions: Position[] | undefined;
 
 	public constructor(params: InewDepartment) {
+		super();
 		if (params) {
 			this.name = params.name;
 			this.description = params.description;

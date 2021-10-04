@@ -13,16 +13,15 @@ describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colabo
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
                 token = res.headers.token;
                 done();
             });
+        });
     });
     after((done) => {
         getConnection().close();

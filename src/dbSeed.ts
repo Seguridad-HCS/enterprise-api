@@ -8,6 +8,7 @@ import LocationProfile from 'models/LocationProfile.model';
 import Employee from 'models/Employee.model';
 import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
+import Service from 'models/Service.model';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -203,9 +204,17 @@ const partner2 = new Partner({
     name: 'Bimbo',
     legalName: 'Panaderia Bimbo S.A. de C.V.',
     rfc: 'MANO990503Q56',
-    representative: 'Jon Doe Test',
+    representative: 'John Doe Test',
     phoneNumber: '+525511663377',
-    email: 'partner@sample.com'
+    email: 'test@sample.com'
+});
+const partner3 = new Partner({
+    name: 'Hitachi',
+    legalName: 'Hitachi Electronics S.A. de C.V.',
+    rfc: 'MAMO990503Q56',
+    representative: 'Obi Wan Kenobi',
+    phoneNumber: '+525511664477',
+    email: 'jedi@sample.com'
 });
 
 // Partner contacts
@@ -224,63 +233,67 @@ const partnerContact2 = new PartnerContact({
     partner: partner2
 });
 
+const service1 = new Service({
+    partner: partner2
+});
+
 const seed = async () => {
     try {
         console.log('Ejecutando semilla del servidor');
         await dbConnection();
 
         // Create departments
-        const depRepo = getRepository(Department);
-        await depRepo.save(managerDep);
-        await depRepo.save(hrDep);
-        await depRepo.save(sysDep);
-        await depRepo.save(opDep);
-        await depRepo.save(finDep);
+        await managerDep.save();
+        await hrDep.save();
+        await sysDep.save();
+        await opDep.save();
+        await finDep.save();
         console.log('Departamentos creados');
 
         // Create positions
-        const posRepo = getRepository(Position);
-        await posRepo.save(ceo);
-        await posRepo.save(cto);
-        await posRepo.save(dev);
-        await posRepo.save(recruiter);
+        await ceo.save();
+        await cto.save();
+        await dev.save();
+        await recruiter.save();
         console.log('Posiciones creadas');
 
-        // Create location
-        const locRepo = getRepository(Location);
-        await locRepo.save(devHouse);
-        await locRepo.save(testOffice);
+        // Create locations
+        await devHouse.save();
+        await testOffice.save();
         console.log('Locaciones creadas');
 
-        // Create location profile
-        const locProRepo = getRepository(LocationProfile);
-        await locProRepo.save(devHouseCTOProfile);
-        await locProRepo.save(devHouseDEVProfile);
-        await locProRepo.save(devHouseRECRUITERProfile);
-        await locProRepo.save(testOfficeCEOProfile);
-        await locProRepo.save(testOfficeRECRUITERProfile);
+        // Create location profiles
+        await devHouseCTOProfile.save();
+        await devHouseDEVProfile.save();
+        await devHouseRECRUITERProfile.save();
+        await testOfficeCEOProfile.save();
+        await testOfficeRECRUITERProfile.save();
         console.log('Perfiles para locaciones creadas');
 
         // Create employees
-        const empRepo = getRepository(Employee);
-        await empRepo.save(employee1);
-        await empRepo.save(employee2);
-        await empRepo.save(employee3);
+        await employee1.save();
+        await employee2.save();
+        await employee3.save();
         console.log('Empleados creados');
 
-        const partRepo = getRepository(Partner);
-        await partRepo.save(partner1);
-        await partRepo.save(partner2);
+        // Create partners
+        await partner1.save();
+        await partner2.save();
+        await partner3.save();
         console.log('Socios creados');
 
-        const contRepo = getRepository(PartnerContact);
-        await contRepo.save(partnerContact1);
-        await contRepo.save(partnerContact2);
+        // Create parner contacts
+        await partnerContact1.save();
+        await partnerContact2.save();
         console.log('Contactos creados');
+
+        // Create services
+        await service1.save();
+        console.log('Servicios creados');
 
         return;
     } catch (e) {
-        console.log(e);
+        console.trace(e);
     }
 }
 

@@ -16,10 +16,8 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
@@ -42,6 +40,7 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
                             });
                     });
             });
+        });
     });
     after((done) => {
         getConnection().close();

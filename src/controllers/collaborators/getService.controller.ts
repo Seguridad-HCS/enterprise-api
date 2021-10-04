@@ -4,9 +4,8 @@ import Service from 'models/Service.model';
 export default async(req:Request, res:Response) => {
     try {
         const service = new Service();
-        await service.getService(req.body.service);
-        console.log(service);
-        res.status(200).json('Ok');
+        const query = await service.getService(req.params.serviceId);
+        res.status(200).json({ partner: query });
     } catch(e) {
         if(e instanceof Error) {
             if(e.message === 'No service') res.status(404).json({

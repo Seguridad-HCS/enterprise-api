@@ -8,16 +8,15 @@ const app = createServer();
 
 describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
     let token:string;
-    let partnerId:string;
+    let partnerWithServices:string;
+    let partnerWithoutServices:string;
     const loginData = {
         email: 'johndoe@gmail.com',
         password: 'test'
     };
     before((done) => {
-        dbConnection().then(() => done());
-    });
-    beforeEach((done) => {
-        request(app).post('/collaborators/auth/login')
+        dbConnection().then(() => {
+            request(app).post('/collaborators/auth/login')
             .send(loginData)
             .end((err, res) => {
                 if (err) return done(err);
@@ -27,20 +26,24 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
                     .set('token', token)
                     .end((err, res) => {
                         if (err) return done(err);
-                        partnerId = res.body.partners![0].id;
+                        res.body.partners.forEach((partner:any) => {
+                            if(partner.services.length > 0) partnerWithServices = partner.id;
+                            else partnerWithoutServices = partner.id;
+                        });
                         done();
                     });
             });
+        });
     });
     after((done) => {
         getConnection().close();
         done();
     });
-    it('201 - Contacto creado exitosamente', (done) => {
+    it('201 - Servicio creado exitosamente', (done) => {
         request(app).post('/collaborators/services')
             .set('token', token)
             .send({
-                partner: partnerId,
+                partner: partnerWithoutServices,
             })
             .expect('Content-type', /json/)
             .expect(201)
@@ -70,7 +73,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
         request(app).post('/collaborators/services')
             .set('token', token)
             .send({
-                partner: partnerId,
+                partner: partnerWithServices,
             })
             .expect('Content-type', /json/)
             .expect(405)
