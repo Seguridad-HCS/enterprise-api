@@ -23,10 +23,10 @@
  *            schema:
  *              type: object
  *              properties:
- *                total: 
+ *                total:
  *                  type: number
  *                  example: 1
- *                minAge: 
+ *                minAge:
  *                  type: number
  *                  example: 18
  *                maxAge:
@@ -55,9 +55,9 @@
  *           description: El perfil fue creado exitosamente
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: Perfil creado
@@ -118,9 +118,9 @@
  *           description: El perfil fue eliminado exitosamente
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: Perfil eliminado
@@ -132,11 +132,11 @@
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: El perfil esta asociado a un servicio que no esta en etapa de registro
- *         
+ *
  */

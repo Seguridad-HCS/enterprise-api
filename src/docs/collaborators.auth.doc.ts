@@ -18,10 +18,10 @@
  *            schema:
  *              type: object
  *              properties:
- *                email: 
+ *                email:
  *                  type: string
  *                  example: oscarmartinez1998lol@gmail.com
- *                password: 
+ *                password:
  *                  type: string
  *                  example: test
  *       responses:
@@ -33,13 +33,13 @@
  *              type: string
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: Inicio exitoso
- *                   name: 
+ *                   name:
  *                    type: string
  *                    example: John Doe
  *                   role:

@@ -25,10 +25,10 @@
  *            schema:
  *              type: object
  *              properties:
- *                name: 
+ *                name:
  *                  type: string
  *                  example: Oficinas de pruebas
- *                address: 
+ *                address:
  *                  type: object
  *                  properties:
  *                    street:
@@ -57,10 +57,10 @@
  *           description: La locacion fue registrada exitosamente
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
- *                   server: 
+ *                 properties:
+ *                   server:
  *                    type: string
  *                   location:
  *                    type: object
@@ -68,10 +68,10 @@
  *                      id:
  *                        type: string
  *                        example: 1
- *                      name: 
+ *                      name:
  *                        type: string
  *                        example: Oficinas de pruebas
- *                      address: 
+ *                      address:
  *                        type: object
  *                        properties:
  *                          street:
@@ -101,20 +101,20 @@
  *           description: El servidor encontro un error en la logica del proceso, hay mas detalles en el body
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
- *                   server: 
+ *                 properties:
+ *                   server:
  *                    type: string
  *                    description: Describe el error causado en el server
  *         '500':
  *           description: Error interno del servidor, hay mas detalles en el body
  *           content:
  *            application/json:
- *              schema: 
+ *              schema:
  *                type: object
- *                properties: 
- *                  server: 
+ *                properties:
+ *                  server:
  *                   type: string
  *                   description: Describe el error causado en el server
  */
@@ -144,14 +144,14 @@
  *            description: Muestra la lista de instalaciones
  *            content:
  *              application/json:
- *                schema: 
+ *                schema:
  *                  type: object
- *                  properties: 
- *                    server: 
+ *                  properties:
+ *                    server:
  *                      type: string
  *                    locations:
  *                      type: array
- *                      items: 
+ *                      items:
  *                        type: object
  *                        properties:
  *                          id:
@@ -213,7 +213,7 @@
  *            description: No se puede realizar la accion debido a una restriccion con la logica de la empresa
  *          '404':
  *            description: La locacion solicitada no se encuentra
- *          '401': 
+ *          '401':
  *            description: El usuario no cuenta con los permisos para realizar esta accion
  */
 
@@ -242,10 +242,10 @@
  *            description: Muestra los datos de la locacion solicitada
  *            content:
  *              application/json:
- *                schema: 
+ *                schema:
  *                  type: object
- *                  properties: 
- *                    id: 
+ *                  properties:
+ *                    id:
  *                      type: string
  *                    name:
  *                      type: string
@@ -256,7 +256,7 @@
  *                    address:
  *                      type: object
  *                      properties:
- *                        id: 
+ *                        id:
  *                          type: number
  *                        street:
  *                          type: string
@@ -274,7 +274,7 @@
  *                          type: string
  *                    profiles:
  *                      type: array
- *                      items: 
+ *                      items:
  *                        type: object
  *                        properties:
  *                          id:
@@ -295,7 +295,7 @@
  *                          position:
  *                            type: object
  *                            properties:
- *                              id: 
+ *                              id:
  *                                type: number
  *                                example: 1
  *                              name:
@@ -324,6 +324,6 @@
  *                                example: 10
  *          '404':
  *            description: La locacion solicitada no se encuentra
- *          '401': 
+ *          '401':
  *            description: El usuario no cuenta con los permisos para realizar esta accion
  */

@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 import login from 'controllers/collaborators/login.controller';
 import logout from 'controllers/collaborators/logout.controller';
 import rebootPassword from 'controllers/collaborators/rebootPassword.controller';
-import recoverPassword from 'controllers/collaborators/recoverPassword.controller'; 
+import recoverPassword from 'controllers/collaborators/recoverPassword.controller';
 
 import verifyToken from '../middlewares/verifyToken.middleware';
 

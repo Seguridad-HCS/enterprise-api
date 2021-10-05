@@ -23,7 +23,7 @@
  *             schema:
  *               type: object
  *               properties:
- *                 name: 
+ *                 name:
  *                   type: string
  *                   example: Empresa de pruebas
  *                 legalName:
@@ -46,7 +46,7 @@
  *           description: Socio creado
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
  *                 properties:
  *                   server:
@@ -70,25 +70,25 @@
  *                       rfc:
  *                         type: string
  *                         example: MJO002356S76
- *                       email: 
+ *                       email:
  *                         type: string
  *                         example: ejemplo@test.com
  *                       phoneNumber:
  *                         type: string
- *                         example: +524458275377  
+ *                         example: +524458275377
  *         '401':
  *           description: El token utilizado es corrupto o inexistente
  *         '405':
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: El empleado actualmente tiene funciones activas en el sistema
- *         
+ *
  */
 
 /**
@@ -110,14 +110,14 @@
  *            description: Muestra la lista de instalaciones
  *            content:
  *              application/json:
- *                schema: 
+ *                schema:
  *                  type: object
- *                  properties: 
- *                    server: 
+ *                  properties:
+ *                    server:
  *                      type: string
  *                    locations:
  *                      type: array
- *                      items: 
+ *                      items:
  *                        type: object
  *                        properties:
  *                          id:

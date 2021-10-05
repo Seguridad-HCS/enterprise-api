@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
-import Partner from 'models/Partner.model';
+import Service from 'models/Service.model';
 
 export default async (req: Request, res: Response) => {
   try {
-    const partner = new Partner();
-    const query = await partner.getPartner(req.params.partnerId);
-    res.status(200).json({ partner: query });
+    const service = new Service();
+    await service.getService(req.params.serviceId);
   } catch (e) {
     if (e instanceof Error) {
-      if (e.message === 'No partner')
+      if (e.message === 'No service')
         res.status(404).json({
-          server: 'Socio no encontrado'
+          server: 'Servicio no encontrado'
         });
       else
         res.status(500).json({

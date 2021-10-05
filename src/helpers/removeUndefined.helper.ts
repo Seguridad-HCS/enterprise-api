@@ -1,10 +1,10 @@
 const removeNull = (obj: any): any => {
-    if (obj === undefined) return null;
-    if (typeof obj === 'object') {
-        for (let key in obj) {
-            obj[key] = removeNull(obj[key]);
-        }
+  if (obj === undefined) return null;
+  if (typeof obj === 'object') {
+    for (const key in obj) {
+      obj[key] = removeNull(obj[key]);
     }
-    return obj;
-}
+  }
+  return obj;
+};
 export default removeNull;

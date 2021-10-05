@@ -23,7 +23,7 @@
  *             schema:
  *               type: object
  *               properties:
- *                 name: 
+ *                 name:
  *                   type: string
  *                   example: John
  *                 surname:
@@ -61,7 +61,7 @@
  *           description: El empleado fue registrado exitosamente
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
  *                 properties:
  *                   server:
@@ -75,13 +75,13 @@
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: El perfil esta asociado a un servicio que no esta en etapa de registro
- *         
+ *
  */
 
 /**
@@ -104,7 +104,7 @@
  *           description: Se muestran los datos asociados al empleado solicitado
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
  *                 properties:
  *                   employee:
@@ -151,7 +151,7 @@
  *                       position:
  *                         type: object
  *                       location:
- *                         type: onject        
+ *                         type: onject
  *         '401':
  *           description: El token utilizado es corrupto o inexistente
  *         '404':
@@ -160,13 +160,13 @@
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: El perfil esta asociado a un servicio que no esta en etapa de registro
- *         
+ *
  */
 
 /**
@@ -189,7 +189,7 @@
  *           description: Empleado eliminado
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
  *                 properties:
  *                   employee:
@@ -197,7 +197,7 @@
  *                     properties:
  *                       server:
  *                         type: string
- *                         example: Colaborador eliminado 
+ *                         example: Colaborador eliminado
  *         '401':
  *           description: El token utilizado es corrupto o inexistente
  *         '404':
@@ -206,11 +206,11 @@
  *           description: La accion choca con alguna regla de negocio, leer el response para mas informacion
  *           content:
  *             application/json:
- *               schema: 
+ *               schema:
  *                 type: object
- *                 properties: 
+ *                 properties:
  *                   server:
  *                    type: string
  *                    example: El empleado actualmente tiene funciones activas en el sistema
- *         
+ *
  */
