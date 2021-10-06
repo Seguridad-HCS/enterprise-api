@@ -30,7 +30,7 @@ describe('DELETE /collaborators/employees - Ruta para eliminar un colaborador', 
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
-              employeeId = res.body.employees![0].id;
+              employeeId = res.body.employees[0].id;
               done();
             });
         });

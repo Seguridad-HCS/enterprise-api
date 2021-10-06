@@ -27,7 +27,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
-              partnerId = res.body.partners![0].id;
+              partnerId = res.body.partners[0].id;
               done();
             });
         });

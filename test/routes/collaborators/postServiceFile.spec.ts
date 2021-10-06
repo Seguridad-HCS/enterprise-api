@@ -31,7 +31,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
               const partner = res.body.partners.find(
                 (partner: any) => partner.services.length > 0
               );
-              serviceId = partner.services![0].id;
+              serviceId = partner.services[0].id;
               done();
             });
         });
@@ -41,11 +41,56 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
     getConnection().close();
     done();
   });
-  it('201 - Archivo creado exitosamente', (done) => {
+  it('201 - Acta constitutiva actualizada - Etapa de registro', (done) => {
     request(app)
       .post('/collaborators/services/files')
       .set('token', token)
       .field('file', 'constitutiveAct')
+      .field('service', serviceId)
+      .attach('file', path.resolve(__dirname, '../../sampleFiles/test.pdf'))
+      .expect('Content-type', /json/)
+      .expect(201)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.server).to.equal('Archivo actualizado');
+        done();
+      });
+  });
+  it('201 - Poder notarial actualizado - Etapa de registro', (done) => {
+    request(app)
+      .post('/collaborators/services/files')
+      .set('token', token)
+      .field('file', 'powerOfAttorney')
+      .field('service', serviceId)
+      .attach('file', path.resolve(__dirname, '../../sampleFiles/test.pdf'))
+      .expect('Content-type', /json/)
+      .expect(201)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.server).to.equal('Archivo actualizado');
+        done();
+      });
+  });
+  it('201 - Comprobante de domicilio creado - Etapa de registro', (done) => {
+    request(app)
+      .post('/collaborators/services/files')
+      .set('token', token)
+      .field('file', 'addressProof')
+      .field('service', serviceId)
+      .attach('file', path.resolve(__dirname, '../../sampleFiles/test.pdf'))
+      .expect('Content-type', /json/)
+      .expect(201)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.server).to.equal('Archivo creado');
+        done();
+      });
+  });
+  it('201 - Ine creada - Etapa de registro', (done) => {
+    request(app)
+      .post('/collaborators/services/files')
+      .set('token', token)
+      .field('file', 'ine')
       .field('service', serviceId)
       .attach('file', path.resolve(__dirname, '../../sampleFiles/test.pdf'))
       .expect('Content-type', /json/)
@@ -72,7 +117,24 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
         done();
       });
   });
-  it('405 - El archivo no se puede modificar', (done) => {
+  it('405 - El nombre del archivo no coincide con la etapa del servicio', (done) => {
+    request(app)
+      .post('/collaborators/services/files')
+      .set('token', token)
+      .field('file', 'thisisatest')
+      .field('service', serviceId)
+      .attach('file', path.resolve(__dirname, '../../sampleFiles/test.pdf'))
+      .expect('Content-type', /json/)
+      .expect(405)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.server).to.equal(
+          'El nombre del archivo no coincide con la etapa del servicio'
+        );
+        done();
+      });
+  });
+  it('405 - Archivo bloqueado PENDIENTE DE TESTEAR', (done) => {
     request(app)
       .post('/collaborators/services/files')
       .set('token', token)
@@ -83,7 +145,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
       .expect(405)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.body.server).to.equal('Ya hay un servicio en proceso');
+        expect(res.body.server).to.equal('Archivo bloqueado');
         done();
       });
   });

@@ -5,7 +5,7 @@ import Employee from 'models/Employee.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
 import { ValidationError } from 'class-validator';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const employee = new Employee(req.body);
     await getRepository(Employee)

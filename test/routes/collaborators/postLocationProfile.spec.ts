@@ -28,13 +28,13 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
-              locationId = res.body.locations![0].id;
+              locationId = res.body.locations[0].id;
               request(app)
                 .get('/collaborators/employees/positions')
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
-                  positionId = res.body.positions![0].id;
+                  positionId = res.body.positions[0].id;
                   done();
                 });
             });

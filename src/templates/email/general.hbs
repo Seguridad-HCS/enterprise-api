@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .body {
+            background-color: #e5e5e5;
+            margin: 0;
+            padding: 40px; 
+            font-size: 16px;
+        }
+        .body p {
+            margin: 0;
+        }
+        .table {
+            max-width: 700px;
+            font-family: sans-serif;
+            min-width: 400;
+            margin: auto;
+            border: 1px solid #CCC;
+            border-collapse: collapse;
+        }
+        .header {
+            background-color: #000;
+            margin-left:auto; 
+            margin-right:0;
+        }
+        .header img {
+            width: 200px;
+            margin-top: 20px;
+            margin-bottom: 18px;
+        }
+        .h3 {
+            font-size: 26px;
+            margin-bottom: 0;
+        }
+        .content {
+            margin: 25px 30px;
+        }
+        .content-wrapper {
+            background-color: white;
+        }
+        .footer {
+            padding: 10px 15px;
+            text-align: center;
+            font-size: 12px;
+            background-color: #0D4A6F;
+        }
+        .footer p {
+            color: white;
+        }
+        .span {
+            font-weight: 700;
+        }
+        .large-screen {
+            display: inline-block;
+        }
+        .short-screen {
+            display: none;
+        }
+        @media only screen and (max-width:400px)  {
+            .body {
+                padding: 0 !important;
+            }
+            .table {
+                width: 100% !important;
+            }
+            .large-screen {
+            display: none;
+        }
+        .short-screen {
+            display: inline-block;
+        }
+        }
+        
+    </style>
+</head>
+<body class="body">
+    <table class="table">
+        <tr>
+            <th class="header"><img src="https://i.imgur.com/28jV3wi.png" alt="logow" border="0" /></th>
+        </tr>
+        <tr>
+            <th class="content-wrapper">
+                <div class="content">
+                    <h3 class="h3">Sistema de monitoreo avanzado HCS Eagle</h3><hr>
+                    {{> content-block}}
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <th class="footer">
+                <p> 
+                Safe Eagle es la materialización de una visión de  software y tecnocracia transformando a la seguridad.  Descubre más 
+                <span class="span">
+                    <a href="https://www.seguridadhcs.com/privacy" style="text-decoration: none;">aquí</a>
+                </span>
+                </p>
+            </th>
+        </tr>
+    </table>
+</body>
+</html>

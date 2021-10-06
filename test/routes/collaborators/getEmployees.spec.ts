@@ -40,7 +40,7 @@ describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores r
       .end((err, res) => {
         if (err) return done(err);
         expect(res.body.server).to.equal('Lista de colaboradores');
-        res.body.employees.forEach((employee) => {
+        res.body.employees.forEach((employee: any) => {
           expect(employee.id).to.be.a('string');
           expect(employee.name).to.be.a('string');
           expect(employee.surname).to.be.a('string');

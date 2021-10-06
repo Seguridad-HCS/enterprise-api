@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import LocationProfile from 'models/LocationProfile.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const profile = new LocationProfile();
     await profile.getLocationProfile(req.params.profileId);

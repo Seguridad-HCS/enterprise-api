@@ -1,5 +1,7 @@
-import { getRepository } from 'typeorm';
+/* eslint-disable no-console */
 import dbConnection from './dbConnection';
+import fs from 'fs';
+import path from 'path';
 
 import Position from 'models/Position.model';
 import Department from 'models/Department.model';
@@ -9,6 +11,7 @@ import Employee from 'models/Employee.model';
 import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
+import ServiceFile from 'models/ServiceFile.model';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -233,13 +236,34 @@ const partnerContact2 = new PartnerContact({
   email: 'carlos@ejemplo.com',
   partner: partner2
 });
+// Service files
+const buffer = fs.readFileSync(
+  path.resolve(__dirname, '../test/sampleFiles/test.pdf')
+);
+const bufferSize = Buffer.byteLength(buffer);
+const fileData = {
+  fieldname: 'file',
+  originalname: 'test.pdf',
+  encoding: '7bit',
+  mimetype: 'application/pdf',
+  buffer: buffer,
+  size: bufferSize
+} as Express.Multer.File;
+const file1 = new ServiceFile();
+const file2 = new ServiceFile();
 
+// Services
 const service1 = new Service({
   partner: partner2
 });
+service1.constitutiveAct = file1;
+service1.powerOfAttorney = file2;
 
 const seed = async () => {
   try {
+    if (!fs.existsSync(path.resolve(__dirname, '../../files'))) {
+      fs.mkdirSync(path.resolve(__dirname, '../../files'));
+    }
     console.log('Ejecutando semilla del servidor');
     await dbConnection();
 
@@ -290,6 +314,8 @@ const seed = async () => {
 
     // Create services
     await service1.save();
+    file1.setFile(fileData);
+    file2.setFile(fileData);
     console.log('Servicios creados');
 
     return;

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Partner from 'models/Partner.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const partner = new Partner();
     const query = await partner.getPartner(req.params.partnerId);

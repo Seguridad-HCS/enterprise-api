@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Service from 'models/Service.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const service = new Service();
     await service.getService(req.params.serviceId);

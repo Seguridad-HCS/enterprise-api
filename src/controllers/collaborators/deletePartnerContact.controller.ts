@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const contact = new PartnerContact();
     const partner = new Partner();

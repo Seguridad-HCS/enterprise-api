@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import LocationProfile from 'models/LocationProfile.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const profile = new LocationProfile(req.body);
     await profile

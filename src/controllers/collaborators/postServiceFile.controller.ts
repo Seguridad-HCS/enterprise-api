@@ -1,55 +1,41 @@
 import { Request, Response } from 'express';
-import { promisify } from 'util';
-import path from 'path';
-import * as fs from 'fs';
 
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
-
-const deleteFileAsync = promisify(fs.unlink);
-const writeFileAsync = promisify(fs.writeFile);
 
 const registerFiles = [
   'constitutiveAct',
   'powerOfAttorney',
   'addressProof',
-  'Ine'
+  'ine'
 ];
+const negotiationFiles = ['contract'];
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const service = new Service() as any;
     await service.getService(req.body.service);
     if (
       service.status === 'registro' &&
-      registerFiles.includes(req.body.file)
+      registerFiles.includes(req.body.file) &&
+      req.file != undefined
     ) {
       const key = req.body.file as keyof typeof service;
-      if (service[key] !== null) {
-        console.log('Debemos actualizar el archivo');
-        if (service[key]!.lock)
+      const serviceFile = service[key] as ServiceFile;
+      if (serviceFile !== null) {
+        if (serviceFile.lock)
           res.status(405).json({
             server: 'Archivo bloqueado'
           });
         else {
-          await deleteFileAsync(
-            path.resolve(__dirname, '../../files', service[key].name)
-          );
-          await writeFileAsync(
-            path.resolve(__dirname, '../../../files', service[key].name),
-            req.file!.buffer
-          );
+          serviceFile.updateFile(req.file);
           res.status(201).json({
             server: 'Archivo actualizado'
           });
         }
       } else {
-        const file = new ServiceFile({});
-        await writeFileAsync(
-          path.resolve(__dirname, '../../../files', file.name!),
-          req.file!.buffer
-        );
-        service[key] = file;
+        const file = new ServiceFile();
+        file.setFile(req.file);
         await service
           .save()
           .then(() => {
@@ -57,8 +43,7 @@ export default async (req: Request, res: Response) => {
               server: 'Archivo creado'
             });
           })
-          .catch((err: any) => {
-            console.log(err);
+          .catch(() => {
             res.status(500).json({
               server: 'Error en la base de datos'
             });

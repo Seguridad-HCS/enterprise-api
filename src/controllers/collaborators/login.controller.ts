@@ -8,7 +8,7 @@ import Employee from '../../models/Employee.model';
 
 dotenv.config();
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.body || !req.body.email || !req.body.password)
       throw Error('Faltan campos');

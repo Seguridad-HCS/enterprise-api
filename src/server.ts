@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import multer from 'multer';
+import path from 'path';
 import * as fs from 'fs';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -39,9 +40,9 @@ const options = {
 };
 const specs = swaggerJsdoc(options);
 
-export default function createServer() {
-  if (!fs.existsSync('files')) {
-    fs.mkdirSync('files');
+export default function createServer(): express.Application {
+  if (!fs.existsSync(path.resolve(__dirname, '../../files'))) {
+    fs.mkdirSync(path.resolve(__dirname, '../../files'));
   }
   const app: Application = express();
   dotenv.config();

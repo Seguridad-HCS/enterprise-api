@@ -3,7 +3,7 @@ import Partner from 'models/Partner.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
 import { ValidationError } from 'class-validator';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const partner = new Partner(req.body);
     await partner

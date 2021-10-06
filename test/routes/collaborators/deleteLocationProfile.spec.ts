@@ -29,7 +29,7 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
-              locationId = res.body.locations![0].id;
+              locationId = res.body.locations[0].id;
               request(app)
                 .get(`/collaborators/locations/${locationId}`)
                 .set('token', token)

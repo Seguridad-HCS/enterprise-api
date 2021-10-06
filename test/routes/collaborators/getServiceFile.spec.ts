@@ -6,9 +6,9 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un socio', () => {
+describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descargar un archivo de servicio', () => {
   let token: string;
-  let contactId: number;
+  let serviceId: string;
   const loginData = {
     email: 'johndoe@gmail.com',
     password: 'test'
@@ -21,21 +21,19 @@ describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un so
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
-          // Get some random partnerId
+          // Get some partnerId
           request(app)
             .get('/collaborators/partners')
             .set('token', token)
+            .expect('Content-type', /json/)
+            .expect(200)
             .end((err, res) => {
               if (err) return done(err);
-              const partnerId = res.body.partners[0].id;
-              request(app)
-                .get(`/collaborators/partners/${partnerId}`)
-                .set('token', token)
-                .end((err, res) => {
-                  if (err) return done(err);
-                  contactId = res.body.partner.contacts[0].id;
-                  done();
-                });
+              const partnerWithService = res.body.partners.find(
+                (partner: any) => partner.services.length > 0
+              );
+              serviceId = partnerWithService.services[0].id;
+              done();
             });
         });
     });
@@ -44,46 +42,45 @@ describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un so
     getConnection().close();
     done();
   });
-  it('200 - Contacto eliminado', (done) => {
+  it('200 - Obtiene el archivo del servicio', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/${contactId}`)
+      .get(`/collaborators/services/${serviceId}/constitutiveAct`)
       .set('token', token)
-      .expect('Content-type', 'application/json; charset=utf-8')
+      .expect('Content-type', 'application/pdf')
       .expect(200)
-      .end((err, res) => {
+      .end((err) => {
         if (err) return done(err);
-        expect(res.body.server).to.equal('Contacto eliminado');
         done();
       });
   });
-  it('404 - Contacto no encontrado', (done) => {
+  it('404 - El servicio no fue encontrado', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/1`)
+      .get(`/collaborators/services/thisIsATest/constitutiveAct`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.body.server).to.equal('Contacto no encontrado');
+        expect(res.body.server).to.equal('Servicio no encontrado');
         done();
       });
   });
-  it('405 - Debe existir al menos un contacto si el socio tiene servicios activos 405 TESTEO PENDIENTE', (done) => {
+  it('404 - Nombre del archivo inexistente', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/thiisatest`)
+      .get(`/collaborators/services/${serviceId}/thisIsATest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.body.server).to.equal('Contacto no encontrado');
+        expect(res.body.server).to.equal('Nombre del archivo inexistente');
         done();
       });
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/${contactId}`)
-      .expect('Content-type', /json/)
+      .get(`/collaborators/services/${serviceId}/constitutiveAct`)
+      .expect('Content-type', 'application/json; charset=utf-8')
       .expect(405)
       .end((err, res) => {
         if (err) return done(err);

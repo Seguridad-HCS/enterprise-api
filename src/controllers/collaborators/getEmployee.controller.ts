@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Employee from 'models/Employee.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const employee = new Employee();
     const data = await employee.getEmployee(req.params.employeeId);

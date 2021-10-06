@@ -26,23 +26,19 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
-          const payload = jwt.verify(
-            token,
-            <string>process.env.SERVER_TOKEN
-          ) as jwt.JwtPayload;
           // Get some random position Id
           request(app)
             .get('/collaborators/locations')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
-              const locationId = res.body.locations![0].id;
+              const locationId = res.body.locations[0].id;
               request(app)
                 .get(`/collaborators/locations/${locationId}`)
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
-                  profileId = res.body.location.profiles![0].id;
+                  profileId = res.body.location.profiles[0].id;
                   done();
                 });
             });

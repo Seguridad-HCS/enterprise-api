@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Position from 'models/Position.model';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     const positions = new Position();
     const query = await positions.getAllPositions();

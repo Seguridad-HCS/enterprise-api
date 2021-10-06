@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import Employee from '../../models/Employee.model';
 import { getRepository } from 'typeorm';
 
-export default async (req: Request, res: Response) => {
+export default async (req: Request, res: Response): Promise<void> => {
   try {
     req.user.lastLogin = undefined;
     res.status(200).json({
