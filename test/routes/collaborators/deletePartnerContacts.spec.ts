@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un socio', () => {
+describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el contacto de un socio', () => {
   let token: string;
   let contactId: number;
   const loginData = {
