@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from 'logger';
 
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
@@ -43,7 +44,8 @@ export default async (req: Request, res: Response): Promise<void> => {
               server: 'Archivo creado'
             });
           })
-          .catch(() => {
+          .catch((err: unknown) => {
+            logger.error(err);
             res.status(500).json({
               server: 'Error en la base de datos'
             });
@@ -54,16 +56,18 @@ export default async (req: Request, res: Response): Promise<void> => {
         server: 'El nombre del archivo no coincide con la etapa del servicio'
       });
     }
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === 'No service')
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === 'No service')
         res.status(404).json({
           server: 'Servicio no encontrado'
         });
-      else
+      else {
+        logger.error(err);
         res.status(500).json({
           server: 'Error interno en el servidor'
         });
+      }
     }
   }
 };

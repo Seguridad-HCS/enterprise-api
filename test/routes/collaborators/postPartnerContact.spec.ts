@@ -10,8 +10,8 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   let token: string;
   let partnerId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

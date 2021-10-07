@@ -1,0 +1,154 @@
+tags:
+  name: Colaboradores - Autenticacion
+  description: Autenticacion de colaboradores
+paths:
+  /collaborators/auth/login:
+    post:
+      summary: Autentica a un colaborador en el sistema, en el header de la respuesta se adjunta el token de autenticacion
+      tags: [Colaboradores - Autenticacion]
+      requestBody:
+       content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: seguridadhcsdevs@gmail.com
+                password:
+                  type: string
+                  example: thisIsAtest98!
+      responses:
+        '200':
+          description: El usuario fue autenticado exitosamente
+          headers:
+            token:
+              description: Token de autenticacion del usuario
+              type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Inicio exitoso
+                  name:
+                    type: string
+                    example: John Doe
+                  role:
+                    type: string
+                    example: Desarrollador
+        '404':
+          description: Email o contraseña incorrectos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Email o contraseña incorrectos
+  /collaborators/auth/logout:
+    post:
+      summary: Finaliza la sesion de un colaborador en el sistema
+      tags: [Colaboradores - Autenticacion]
+      parameters:
+      - name: token
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sesion finalizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Sesion finalizada
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto
+  /collaborators/auth/reboot:
+    post:
+      summary: Actualiza la contraseña del usuario
+      tags: [Colaboradores - Autenticacion]
+      requestBody:
+       content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: seguridadhcsdevs@gmail.com
+      responses:
+        '200':
+          description: Correo de recuperacion enviado al colaborador
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Correo de recuperacion enviado al colaborador
+  /collaborators/auth/recover:
+    put:
+      summary: Inicia el proceso para recuperar contraseña
+      tags: [Colaboradores - Autenticacion]
+      parameters:
+      - name: token
+        in: header
+        schema:
+          type: string
+      requestBody:
+       content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: thisIsAtest98!
+      responses:
+        '200':
+          description: Contraseña actualizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Contraseña actualizada
+        '400':
+          description: Nueva contraseña invalida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: La contraseña debe contener al menos una mayuscula, una minuscula, un caracter especial (@$!%*?&) y una longitud entre 8 y 30 caracteres
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto

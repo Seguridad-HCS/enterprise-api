@@ -11,8 +11,8 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   let partnerWithServices: string;
   let partnerWithoutServices: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {
@@ -64,7 +64,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
       .post('/collaborators/services')
       .set('token', token)
       .send({
-        partnerId: 'thisisatest'
+        partner: 'thisisatest'
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(404)

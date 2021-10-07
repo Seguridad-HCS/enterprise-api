@@ -10,8 +10,8 @@ describe('DELETE /collaborators/partners/contacts - Elimina el contacto de un so
   let token: string;
   let contactId: number;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

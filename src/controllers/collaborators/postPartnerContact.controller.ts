@@ -3,6 +3,7 @@ import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
 import { ValidationError } from 'class-validator';
+import logger from 'logger';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
@@ -34,22 +35,26 @@ export default async (req: Request, res: Response): Promise<void> => {
             res.status(404).json({
               server: 'Llaves foraneas invalidas o incorrectas'
             });
-          else
+          else {
+            logger.error(err);
             res.status(500).json({
               server: 'Error en la base de datos'
             });
+          }
         });
     }
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message === 'No partner')
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === 'No partner')
         res.status(404).json({
           server: 'Socio no encontrado'
         });
-      else
+      else {
+        logger.error(err);
         res.status(500).json({
           server: 'Error interno en el servidor'
         });
+      }
     }
   }
 };

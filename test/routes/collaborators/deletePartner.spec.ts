@@ -6,13 +6,13 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/partners - Ruta para eliminar a un socio', () => {
+describe('DELETE /collaborators/partners/<partnerId> - Ruta para eliminar a un socio', () => {
   let token: string;
   let partnerWithServices: string;
   let partnerWithoutServices: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from 'logger';
 import Employee from 'models/Employee.model';
 
 export default async (req: Request, res: Response): Promise<void> => {
@@ -9,8 +10,9 @@ export default async (req: Request, res: Response): Promise<void> => {
       server: 'Lista de colaboradores',
       employees: query
     });
-  } catch (e) {
-    if (e instanceof Error) {
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err);
       res.status(500).json({
         server: 'Error interno en el servidor'
       });

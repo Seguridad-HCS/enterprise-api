@@ -9,8 +9,8 @@ const app = createServer();
 describe('POST /collaborators/partners - Registra a un colaborador en el sistema', () => {
   let token: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

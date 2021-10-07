@@ -6,12 +6,12 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/partners - Ruta para mostrar un socio en especifico', () => {
+describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio en especifico', () => {
   let token: string;
   let partnerId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

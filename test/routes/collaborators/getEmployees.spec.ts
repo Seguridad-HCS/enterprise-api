@@ -12,8 +12,8 @@ dotenv.config();
 describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores registrados', () => {
   let token: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

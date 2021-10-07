@@ -12,8 +12,8 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   let profileWithEmployees: string;
   let profileWithoutEmployees: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

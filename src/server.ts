@@ -1,16 +1,15 @@
 import express, { Application } from 'express';
-
-import morgan from 'morgan';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
-import * as fs from 'fs';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+import * as fs from 'fs';
 
 import routes from 'routes/index';
+import morganMiddleware from 'middlewares/morgan.middleWare';
 
 // Swagger conf
 const options = {
@@ -36,7 +35,7 @@ const options = {
       }
     ]
   },
-  apis: ['./src/docs/*.ts']
+  apis: ['./src/docs/*.yml']
 };
 const specs = swaggerJsdoc(options);
 
@@ -47,9 +46,7 @@ export default function createServer(): express.Application {
   const app: Application = express();
   dotenv.config();
   app.set('PORT', parseInt(<string>process.env.SERVER_PORT, 10) || 4000);
-  if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
-  }
+  if (process.env.NODE_ENV !== 'test') app.use(morganMiddleware);
   if (process.env.NODE_ENV === 'dev') {
     app.use(
       '/api-docs',

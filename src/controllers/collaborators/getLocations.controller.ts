@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import Location from 'models/Location.model';
+import logger from 'logger';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
     const locations = new Location();
-    let query: any;
+    let query;
     if (!req.query.owner) query = await locations.getAllLocations();
     if (parseInt(req.query.owner as string) === 1)
       query = locations.formatLocations(await getCollabLocations());
@@ -14,8 +15,11 @@ export default async (req: Request, res: Response): Promise<void> => {
       server: 'Lista de instalaciones',
       locations: query
     });
-  } catch (e) {
-    res.status(500).json({ server: 'Error en el server' });
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err);
+      res.status(500).json({ server: 'Error en el server' });
+    }
   }
 };
 

@@ -6,16 +6,23 @@
   "scripts": {
     "start": "NODE_PATH=./dist node dist/app.js",
     "build": "tsc -p . --excludeDirectories ./test",
-    "format": "prettier --config .prettierrc './**/*.ts' --write",
-    "lint": "eslint './**/*.{js,ts}' --quiet --fix",
+    "lint": "tsc --noEmit && eslint '*/**/*.{js,ts}' --quiet --fix",
     "staticdev": "ts-node -r tsconfig-paths/register src/app.ts",
-    "dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/app.ts",
-    "test": "NODE_ENV=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register  \"test/**/*.spec.ts\"",
+    "dev": "nodemon",
+    "test": "NODE_ENV=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register  \"test/**/*.spec.ts\" --timeout 3000",
     "seed": "ts-node -r tsconfig-paths/register src/dbSeed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "nodemonConfig": {
+    "watch": [
+      "src/",
+      "src/app.ts"
+    ],
+    "ext": "ts, json, yml",
+    "exec": "NODE_ENV=dev ts-node -r tsconfig-paths/register src/app.ts"
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "class-validator": "^0.13.1",
@@ -32,7 +39,9 @@
     "pg": "^8.7.1",
     "socket.io": "^4.2.0",
     "typeorm": "^0.2.37",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -49,12 +58,16 @@
     "@types/swagger-ui-express": "^4.1.3",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.3.4",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^9.1.1",
     "nodemon": "^2.0.12",
     "prettier": "^2.4.1",
+    "prettier-eslint": "^13.0.0",
+    "prettier-eslint-cli": "^5.0.1",
     "supertest": "^6.1.6",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",

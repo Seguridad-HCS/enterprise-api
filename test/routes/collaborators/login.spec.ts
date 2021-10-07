@@ -13,8 +13,8 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
     request(app)
       .post('/collaborators/auth/login')
       .send({
-        email: 'johndoe@gmail.com',
-        password: 'test'
+        email: 'seguridadhcsdevs@gmail.com',
+        password: 'thisIsAtest98!'
       })
       .expect('Content-type', /json/)
       .expect(200)
@@ -30,8 +30,8 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
     request(app)
       .post('/collaborators/auth/login')
       .send({
-        email: 'johndoe@gmail.mx',
-        password: 'test'
+        email: 'seguridadhcsdevs@gmail.como',
+        password: 'thisIsAtest98!'
       })
       .expect('Content-type', /json/)
       .expect(404)
@@ -46,7 +46,7 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
     request(app)
       .post('/collaborators/auth/login')
       .send({
-        email: 'johndoe@gmail.mx',
+        email: 'seguridadhcsdevs@gmail.com',
         password: 'testtest'
       })
       .expect('Content-type', /json/)

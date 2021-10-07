@@ -5,6 +5,7 @@ import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import Employee from '../../models/Employee.model';
+import logger from 'logger';
 
 dotenv.config();
 
@@ -18,13 +19,13 @@ export default async (req: Request, res: Response): Promise<void> => {
       .leftJoinAndSelect('locProfile.position', 'position')
       .where('user.email = :email', { email: req.body.email })
       .getOne();
-    if (query == undefined || !compare(req.body.password, query.password!))
+    if (query == undefined || !compare(req.body.password, query.password))
       res.status(404).json({
         server: 'Usuario no encontrado'
       });
     else {
       const token = jwt.sign(
-        { data: query!.id },
+        { data: query.id },
         <string>process.env.SERVER_TOKEN,
         {
           expiresIn: '1h'
@@ -36,7 +37,7 @@ export default async (req: Request, res: Response): Promise<void> => {
         .json({
           server: 'Inicio exitoso',
           name: `${query.name} ${query.surname}`,
-          role: `${query.locationProfile!.position!.name}`
+          role: `${query.locationProfile?.position?.name}`
         });
       const { iat } = jwt.verify(
         token,
@@ -45,24 +46,23 @@ export default async (req: Request, res: Response): Promise<void> => {
       query.lastLogin = iat;
       await getRepository(Employee).save(query);
     }
-  } catch (e) {
-    if (e instanceof Error) {
-      if (e.message == 'Bad entry')
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message == 'Bad entry')
         res.status(501).json({
-          server: e.message
+          server: err.message
         });
-      else
+      else {
+        logger.error(err);
         res.status(500).json({
-          server: e.message
+          server: 'Error interno en el servidor'
         });
-    } else {
-      res.status(500).json({
-        server: 'Algo fallo en el server'
-      });
+      }
     }
   }
 };
 
-const compare = (password: string, originalPassword: string) => {
+const compare = (password: string, originalPassword: string | undefined) => {
+  if (originalPassword === undefined) return false;
   return bcrypt.compareSync(password, originalPassword);
 };

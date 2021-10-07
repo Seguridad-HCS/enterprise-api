@@ -11,8 +11,8 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   let token: string;
   let serviceId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

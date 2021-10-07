@@ -42,19 +42,19 @@ interface newEmployee {
 }
 
 interface ImultipleEmployees {
-  id: string;
-  name: string;
-  surname: string;
-  secondSurname: string;
+  id: string | undefined;
+  name: string | undefined;
+  surname: string | undefined;
+  secondSurname: string | undefined;
   position: {
-    name?: string;
-    description?: string;
-    department?: string;
+    name?: string | undefined;
+    description?: string | undefined;
+    department?: string | undefined;
   };
   location: {
-    id?: string;
-    name?: string;
-    state?: string;
+    id?: string | undefined;
+    name?: string | undefined;
+    state?: string | undefined;
   };
 }
 
@@ -97,7 +97,7 @@ export default class Employee extends BaseEntity {
   @Length(3, 50)
   email?: string;
 
-  @Column({ type: 'varchar', length: 80, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   @IsOptional()
   password?: string;
 
@@ -176,7 +176,9 @@ export default class Employee extends BaseEntity {
     return this.formatEmployee();
   }
 
-  public async getAllEmployees(employeeId: string) {
+  public async getAllEmployees(
+    employeeId: string
+  ): Promise<Array<ImultipleEmployees>> {
     const employee = await getRepository(Employee)
       .createQueryBuilder('employee')
       .leftJoinAndSelect('employee.locationProfile', 'profile')
@@ -235,14 +237,14 @@ export default class Employee extends BaseEntity {
     };
   }
 
-  public formatEmployees(employees: Employee[]) {
+  public formatEmployees(employees: Employee[]): Array<ImultipleEmployees> {
     const res: Array<ImultipleEmployees> = [];
     employees.forEach((employee) => {
       const formatted = {
-        id: employee.id!,
-        name: employee.name!,
-        surname: employee.surname!,
-        secondSurname: employee.secondSurname!,
+        id: employee.id,
+        name: employee.name,
+        surname: employee.surname,
+        secondSurname: employee.secondSurname,
         position: {
           name: employee.locationProfile?.position?.name,
           description: employee.locationProfile?.position?.description,
@@ -259,13 +261,19 @@ export default class Employee extends BaseEntity {
     return res;
   }
 
-  public setPassword(password: string) {
-    const salt = bcrypt.genSaltSync(10);
-    this.password = bcrypt.hashSync(password, salt);
+  public setPassword(password: string): void {
+    if (
+      /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[@$!%*?&])[\wñ@$!%*?&]{8,30}$/.test(
+        password
+      )
+    ) {
+      const salt = bcrypt.genSaltSync(10);
+      this.password = bcrypt.hashSync(password, salt);
+    } else throw Error('Regex');
   }
 
   @BeforeInsert()
-  async validateModel() {
+  async validateModel(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

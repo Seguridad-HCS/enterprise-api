@@ -8,10 +8,9 @@ const app = createServer();
 
 describe('GET /collaborators/partners - Ruta para mostrar a los socios registrados', () => {
   let token: string;
-  let partnerId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

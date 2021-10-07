@@ -9,8 +9,8 @@ const app = createServer();
 describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colaborador', () => {
   let token: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

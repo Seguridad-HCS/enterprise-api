@@ -235,10 +235,7 @@ const quote = async (service: Service): Promise<Packer> => {
             new TableCell({
               children: [
                 new Paragraph({
-                  text: `$${(
-                    (30 * parseInt(profile.cost)) /
-                    100
-                  ).toLocaleString()}`,
+                  text: `$${((30 * parseInt(profile.cost)) / 100).toLocaleString()}`,
                   alignment: AlignmentType.CENTER,
                   spacing: {
                     after: 0
@@ -249,10 +246,7 @@ const quote = async (service: Service): Promise<Packer> => {
             new TableCell({
               children: [
                 new Paragraph({
-                  text: `$${(
-                    (30 * parseInt(profile.cost) * profile.total) /
-                    100
-                  ).toLocaleString()}`,
+                  text: `$${((30 * parseInt(profile.cost) * profile.total) / 100).toLocaleString()}`,
                   alignment: AlignmentType.CENTER,
                   spacing: {
                     after: 0

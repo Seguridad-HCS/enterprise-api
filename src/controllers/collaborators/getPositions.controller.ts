@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from 'logger';
 import Position from 'models/Position.model';
 
 export default async (req: Request, res: Response): Promise<void> => {
@@ -9,8 +10,9 @@ export default async (req: Request, res: Response): Promise<void> => {
       server: 'Listado de posiciones',
       positions: query
     });
-  } catch (e) {
-    if (e instanceof Error) {
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err);
       res.status(500).json({
         server: 'Error interno en el servidor'
       });

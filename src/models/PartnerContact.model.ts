@@ -23,6 +23,15 @@ interface InewPartner {
   partner: Partner;
 }
 
+interface IformattedContact {
+  id: string | undefined;
+  name: string | undefined;
+  role: string | undefined;
+  phoneNumber: string | undefined;
+  email: string | undefined;
+  partnerId: string | undefined;
+}
+
 @Entity({ name: 'partner_contact' })
 export default class PartnerContact extends BaseEntity {
   @PrimaryColumn({ type: 'uuid', unique: true, nullable: false })
@@ -71,7 +80,7 @@ export default class PartnerContact extends BaseEntity {
     }
   }
 
-  public async getContact(contactId: string) {
+  public async getContact(contactId: string): Promise<IformattedContact> {
     if (!(uuidValidate(contactId) && uuidVersion(contactId) === 4))
       throw Error('No contact');
     const query = await getRepository(PartnerContact)
@@ -88,7 +97,7 @@ export default class PartnerContact extends BaseEntity {
     return this.formatContact();
   }
 
-  public formatContact() {
+  public formatContact(): IformattedContact {
     return {
       id: this.id,
       name: this.name,
@@ -100,7 +109,7 @@ export default class PartnerContact extends BaseEntity {
   }
 
   @BeforeInsert()
-  async validate() {
+  async validate(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Partner from 'models/Partner.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
 import { ValidationError } from 'class-validator';
+import logger from 'logger';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
@@ -26,13 +27,21 @@ export default async (req: Request, res: Response): Promise<void> => {
           res.status(404).json({
             server: 'Llaves foraneas invalidas o incorrectas'
           });
-        else
+        else if ('23505' === err.code)
+          res.status(405).json({
+            server:
+              'Alguno de los siguientes campos (nombre, nombre legal, email) ya han sido registrados en el sistema'
+          });
+        else {
+          logger.error(err);
           res.status(500).json({
             server: 'Error en la base de datos'
           });
+        }
       });
-  } catch (e) {
-    if (e instanceof Error) {
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err);
       res.status(500).json({
         server: 'Error interno en el servidor'
       });

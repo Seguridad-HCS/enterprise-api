@@ -10,6 +10,7 @@ import fs from 'fs';
 const readFileAsync = promisify(fs.readFile);
 
 import Employee from 'models/Employee.model';
+import logger from 'logger';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
@@ -32,8 +33,9 @@ export default async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       server: 'Correo de recuperacion enviado al colaborador'
     });
-  } catch (e) {
-    if (e instanceof Error) {
+  } catch (err) {
+    if (err instanceof Error) {
+      logger.error(err);
       res.status(500).json({
         server: 'Error interno en el servidor'
       });
@@ -71,4 +73,5 @@ const recoverAccountEmail = async (
     subject: `Safe Eagle | Restablecer cuenta`,
     html: content
   });
+  return;
 };

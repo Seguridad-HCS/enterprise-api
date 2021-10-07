@@ -10,8 +10,8 @@ describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servici
   let token: string;
   let serviceId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

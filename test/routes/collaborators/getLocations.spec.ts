@@ -8,10 +8,9 @@ const app = createServer();
 
 describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locaciones registradas', () => {
   let token: string;
-  let testLocationId: number;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

@@ -3,10 +3,15 @@ import dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
 import { getRepository } from 'typeorm';
 import Employee from 'models/Employee.model';
+import logger from 'logger';
 
 dotenv.config();
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     if (!req.headers.token) throw Error('Bad token');
     const payload = jwt.verify(
@@ -21,6 +26,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       .getOne();
     if (!query) throw Error('Bad token');
     req.user = query;
+    logger.info(`${req.user.id} -> ${req.originalUrl}`);
     next();
   } catch (e) {
     if (e instanceof Error)

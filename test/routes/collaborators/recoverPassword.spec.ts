@@ -14,7 +14,7 @@ describe('POST /collaborators/auth/recover - Restablece la contraseña del colab
     getConnection().close();
     done();
   });
-  it('200 - Se ha restablecido la contraseña del colaborador IMPLEMENTACION PENDIENTE', (done) => {
+  it('200 - Se ha restablecido la contraseña del colaborador TESTEO PENDIENTE', (done) => {
     request(app)
       .put('/collaborators/auth/recover')
       .expect('Content-type', /json/)

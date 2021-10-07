@@ -106,11 +106,13 @@ export default class Location extends BaseEntity {
       .getOne();
     if (location == undefined) throw Error('No location');
     location.profiles?.forEach((location) => {
-      location.minWage = location.minWage! / 100;
-      location.maxWage = location.maxWage! / 100;
-      location.price = location.price! / 100;
+      location.minWage = location.minWage ? location.minWage / 100 : undefined;
+      location.maxWage = location.maxWage ? location.maxWage / 100 : undefined;
+      location.price = location.price ? location.price / 100 : undefined;
       location.employees?.forEach((employee) => {
-        employee.baseWage = employee.baseWage! / 100;
+        employee.baseWage = employee.baseWage
+          ? employee.baseWage / 100
+          : undefined;
       });
     });
     this.id = location.id;
@@ -122,15 +124,7 @@ export default class Location extends BaseEntity {
     this.addressId = location.addressId;
     this.address = location.address;
     this.profiles = location.profiles;
-
-    return {
-      id: this.id,
-      name: this.name,
-      serviceId: this.serviceId,
-      status: this.status,
-      address: this.address,
-      profiles: this.profiles
-    };
+    return this.formatLocation();
   }
 
   public async getAllLocations() {
@@ -170,8 +164,27 @@ export default class Location extends BaseEntity {
     return res;
   }
 
+  public formatLocation() {
+    return {
+      id: this.id,
+      name: this.name,
+      service: this.serviceId,
+      status: this.status,
+      address: {
+        street: this.address?.street,
+        intNumber: this.address?.intNumber,
+        outNumber: this.address?.outNumber,
+        neighborhood: this.address?.neighborhood,
+        municipality: this.address?.municipality,
+        state: this.address?.state,
+        zip: this.address?.state
+      },
+      profiles: this.profiles
+    };
+  }
+
   @BeforeInsert()
-  async validateModel() {
+  async validateModel(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

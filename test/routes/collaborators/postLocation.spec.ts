@@ -9,8 +9,8 @@ const app = createServer();
 describe('POST /collaborators/locations - Ruta de creacion de locaciones', () => {
   let token: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {
@@ -29,22 +29,21 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
     done();
   });
   it('201 - Ubicacion sin servicio creada', (done) => {
-    const data = {
-      name: 'Oficina de pruebas2',
-      address: {
-        street: 'Cipres',
-        outNumber: 'Mz.12 Lt.10',
-        intNumber: 'N/A',
-        neighborhood: 'Narvarte',
-        zip: '09950',
-        municipality: 'Iztapalapa',
-        state: 'Ciudad de Mexico'
-      }
-    };
     request(app)
       .post('/collaborators/locations')
       .set('token', token)
-      .send(data)
+      .send({
+        name: 'Oficina de pruebas2',
+        address: {
+          street: 'Cipres',
+          outNumber: 'Mz.12 Lt.10',
+          intNumber: 'N/A',
+          neighborhood: 'Narvarte',
+          zip: '09950',
+          municipality: 'Iztapalapa',
+          state: 'Ciudad de Mexico'
+        }
+      })
       .expect('Content-type', /json/)
       .expect(201)
       .end((err, res) => {
@@ -55,22 +54,21 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
       });
   });
   it('400 - Error en el input', (done) => {
-    const data = {
-      name: 'Oficina de pruebas2',
-      address: {
-        streeto: 'Cipres',
-        outNumber: 'Mz.12 Lt.10',
-        intNumber: 'N/A',
-        neighborhood: 'Narvarte',
-        zip: '09950',
-        municipality: 'Iztapalapa',
-        state: 'Ciudad de Mexico'
-      }
-    };
     request(app)
       .post('/collaborators/locations')
       .set('token', token)
-      .send(data)
+      .send({
+        name: 'Oficina de pruebas2',
+        address: {
+          streeto: 'Cipres',
+          outNumber: 'Mz.12 Lt.10',
+          intNumber: 'N/A',
+          neighborhood: 'Narvarte',
+          zip: '09950',
+          municipality: 'Iztapalapa',
+          state: 'Ciudad de Mexico'
+        }
+      })
       .expect('Content-type', /json/)
       .expect(400)
       .end((err, res) => {

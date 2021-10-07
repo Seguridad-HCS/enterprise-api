@@ -72,7 +72,7 @@ export default class LocationAddress {
   }
 
   @BeforeInsert()
-  async validateModel() {
+  async validateModel(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

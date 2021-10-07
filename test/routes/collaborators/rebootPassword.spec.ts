@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/recover - Solicita un token de recuperacion de correo', () => {
+describe('POST /collaborators/auth/reboot - Solicita un token de recuperacion de correo', () => {
   before((done) => {
     dbConnection().then(() => done());
   });
@@ -14,14 +14,19 @@ describe('POST /collaborators/auth/recover - Solicita un token de recuperacion d
     getConnection().close();
     done();
   });
-  it('200 - Se ha enviado un correo de recuperacion al correo registrado IMPLEMENTACION PENDIENTE', (done) => {
+  it('200 - Correo de recuperacion enviado al colaborador', (done) => {
     request(app)
       .post('/collaborators/auth/reboot')
+      .send({
+        email: 'seguridadhcsdevs@gmail.com'
+      })
       .expect('Content-type', /json/)
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        //expect(res.body.server).to.equal('Para continuar el proceso accede a tu correo electronico');
+        expect(res.body.server).to.equal(
+          'Correo de recuperacion enviado al colaborador'
+        );
         done();
       });
   });

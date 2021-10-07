@@ -38,6 +38,23 @@ interface IlocationProfile {
   position: Position | string;
 }
 
+interface IformattedProfile {
+  id: string | undefined;
+  minWage: number | undefined;
+  maxWage: number | undefined;
+  price: number | undefined;
+  sex: boolean | undefined;
+  minAge: number | undefined;
+  maxAge: number | undefined;
+  employees: Array<Employee> | undefined;
+  location: Location | undefined;
+  position: {
+    name: string | undefined;
+    description: string | undefined;
+    department: string | undefined;
+  };
+}
+
 @Entity({ name: 'location_profile' })
 @Check('"minAge" < "maxAge"')
 @Check('"minWage" < "maxWage"')
@@ -110,7 +127,9 @@ export default class LocationProfile extends BaseEntity {
     }
   }
 
-  public async getLocationProfile(profileId: string) {
+  public async getLocationProfile(
+    profileId: string
+  ): Promise<IformattedProfile> {
     if (!(uuidValidate(profileId) && uuidVersion(profileId) === 4))
       throw Error('No location profile');
     const profile = await getRepository(LocationProfile)
@@ -135,8 +154,8 @@ export default class LocationProfile extends BaseEntity {
     this.position = profile.position;
     return {
       id: this.id,
-      minWage: this.minWage! / 100,
-      maxWage: this.maxWage! / 100,
+      minWage: this.minWage ? this.minWage / 100 : undefined,
+      maxWage: this.maxWage ? this.maxWage / 100 : undefined,
       price: this.price,
       sex: this.sex,
       minAge: this.minAge,
@@ -152,7 +171,7 @@ export default class LocationProfile extends BaseEntity {
   }
 
   @BeforeInsert()
-  async validateModel() {
+  async validateModel(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

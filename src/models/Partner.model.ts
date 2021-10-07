@@ -90,7 +90,7 @@ export default class Partner extends BaseEntity {
     }
   }
 
-  public canCreateService() {
+  public canCreateService(): boolean {
     let flag = true;
     this.services?.forEach((service) => {
       if (['registro', 'negociacion'].includes(service.status!)) {
@@ -101,7 +101,7 @@ export default class Partner extends BaseEntity {
     return flag;
   }
 
-  public canDeleteLastContact() {
+  public canDeleteLastContact(): boolean {
     let flag = true;
     this.services?.forEach((service) => {
       if (['negociacion', 'preactivo', 'activo'].includes(service.status!)) {
@@ -179,13 +179,13 @@ export default class Partner extends BaseEntity {
     return res;
   }
 
-  public setPassword(password: string) {
+  public setPassword(password: string): void {
     const salt = bcrypt.genSaltSync(10);
-    this.password = bcrypt.hashSync(this.password!, salt);
+    this.password = bcrypt.hashSync(password, salt);
   }
 
   @BeforeInsert()
-  async validateModel() {
+  async validateModel(): Promise<void> {
     this.id = uuidv4();
     await validateOrReject(this, {
       validationError: { value: true, target: false }

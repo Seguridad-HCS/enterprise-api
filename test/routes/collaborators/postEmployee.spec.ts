@@ -15,8 +15,8 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   let newEmployeeId: string;
   let profileId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

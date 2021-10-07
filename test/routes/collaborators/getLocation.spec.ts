@@ -10,8 +10,8 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
   let token: string;
   let locationId: number;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

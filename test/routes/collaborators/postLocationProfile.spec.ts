@@ -11,8 +11,8 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   let locationId: string;
   let positionId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {
@@ -53,9 +53,9 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
         total: 1,
         minAge: 18,
         maxAge: 45,
-        price: 3500000,
-        minWage: 300000,
-        maxWage: 500000,
+        price: 8000,
+        minWage: 3000,
+        maxWage: 5000,
         sex: true,
         position: positionId,
         location: locationId

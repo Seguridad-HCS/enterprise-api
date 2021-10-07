@@ -14,10 +14,9 @@ describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colab
   let token: string;
   let employeeId: string;
   let newEmployeeId: string;
-  let profileId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

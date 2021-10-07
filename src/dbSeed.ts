@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import dbConnection from './dbConnection';
 import fs from 'fs';
 import path from 'path';
@@ -12,6 +11,7 @@ import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
+import logger from 'logger';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -151,7 +151,7 @@ const employee1 = new Employee({
   name: 'John',
   surname: 'Doe',
   secondSurname: 'Test',
-  email: 'johndoe@gmail.com',
+  email: 'seguridadhcsdevs@gmail.com',
   nss: '8964296',
   bloodtype: 'A+',
   rfc: 'MAAVO280605',
@@ -161,7 +161,7 @@ const employee1 = new Employee({
   // image: './public/assets/_testpf1.jpg',
   locationProfile: devHouseCTOProfile
 });
-employee1.setPassword('test');
+employee1.setPassword('thisIsAtest98!');
 
 const employee2 = new Employee({
   name: 'Jane',
@@ -177,7 +177,7 @@ const employee2 = new Employee({
   // image: './public/assets/_testpf1.jpg',
   locationProfile: devHouseDEVProfile
 });
-employee1.setPassword('test');
+employee1.setPassword('thisIsAtest98!');
 
 const employee3 = new Employee({
   name: 'Obi',
@@ -193,7 +193,7 @@ const employee3 = new Employee({
   // image: './public/assets/_testpf1.jpg',
   locationProfile: devHouseDEVProfile
 });
-employee1.setPassword('test');
+employee1.setPassword('thisIsAtest98!');
 
 // Partners
 const partner1 = new Partner({
@@ -264,7 +264,7 @@ const seed = async () => {
     if (!fs.existsSync(path.resolve(__dirname, '../../files'))) {
       fs.mkdirSync(path.resolve(__dirname, '../../files'));
     }
-    console.log('Ejecutando semilla del servidor');
+    logger.debug('Ejecutando semilla del servidor');
     await dbConnection();
 
     // Create departments
@@ -273,19 +273,19 @@ const seed = async () => {
     await sysDep.save();
     await opDep.save();
     await finDep.save();
-    console.log('Departamentos creados');
+    logger.debug('Departamentos creados');
 
     // Create positions
     await ceo.save();
     await cto.save();
     await dev.save();
     await recruiter.save();
-    console.log('Posiciones creadas');
+    logger.debug('Posiciones creadas');
 
     // Create locations
     await devHouse.save();
     await testOffice.save();
-    console.log('Locaciones creadas');
+    logger.debug('Locaciones creadas');
 
     // Create location profiles
     await devHouseCTOProfile.save();
@@ -293,34 +293,34 @@ const seed = async () => {
     await devHouseRECRUITERProfile.save();
     await testOfficeCEOProfile.save();
     await testOfficeRECRUITERProfile.save();
-    console.log('Perfiles para locaciones creadas');
+    logger.debug('Perfiles para locaciones creadas');
 
     // Create employees
     await employee1.save();
     await employee2.save();
     await employee3.save();
-    console.log('Empleados creados');
+    logger.debug('Empleados creados');
 
     // Create partners
     await partner1.save();
     await partner2.save();
     await partner3.save();
-    console.log('Socios creados');
+    logger.debug('Socios creados');
 
     // Create parner contacts
     await partnerContact1.save();
     await partnerContact2.save();
-    console.log('Contactos creados');
+    logger.debug('Contactos creados');
 
     // Create services
     await service1.save();
     file1.setFile(fileData);
     file2.setFile(fileData);
-    console.log('Servicios creados');
+    logger.debug('Servicios creados');
 
     return;
-  } catch (e) {
-    console.trace(e);
+  } catch (err) {
+    logger.error(err);
   }
 };
 

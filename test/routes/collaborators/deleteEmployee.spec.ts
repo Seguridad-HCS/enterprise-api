@@ -9,12 +9,12 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('DELETE /collaborators/employees - Ruta para eliminar un colaborador', () => {
+describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un colaborador', () => {
   let token: string;
   let employeeId: string;
   const loginData = {
-    email: 'johndoe@gmail.com',
-    password: 'test'
+    email: 'seguridadhcsdevs@gmail.com',
+    password: 'thisIsAtest98!'
   };
   before((done) => {
     dbConnection().then(() => {

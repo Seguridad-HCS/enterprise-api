@@ -4,8 +4,9 @@ import Location from 'models/Location.model';
 export default async (req: Request, res: Response): Promise<void> => {
   try {
     const location = new Location();
-    const data = await location.getLocation(req.params.locationId);
-    res.status(200).json({ location: data });
+    const query = await location.getLocation(req.params.locationId);
+    console.log(query);
+    res.status(200).json({ location: query });
   } catch (e) {
     if (e instanceof Error) {
       if (e.message === 'No location')

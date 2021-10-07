@@ -1,0 +1,269 @@
+tags:
+  name: Colaboradores - Socios
+  description: Altas, bajas y cambios en los socios de la organizacion
+paths:
+  /collaborators/partners:
+    get:
+      summary: Obtiene los socios registrados en el sistema.
+      description: Obtiene un arreglo con los socios registrados en el sistema.
+      tags: [Colaboradores - Socios]
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Muestra la lista de instalaciones
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Lista de socios
+                  partners:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: c6465b15-1664-4b3d-941a-11fc669d3709
+                        name:
+                          type: string
+                          example: Bimbo
+                        representative:
+                          type: string
+                          example: John Doe Test
+                        services:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: c6465b15-1664-4b3d-941a-11fc669d3709
+                              status:
+                                type: string
+                                example: registro
+    post:
+      summary: Registra a un socio en el sistema
+      description: Elimina a un empleado del sistema
+      tags: [Colaboradores - Socios]
+      parameters:
+      - name: token
+        in: header
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Empresa de pruebas
+                legalName:
+                  type: string
+                  example: Empresa de pruebas S.A. de C.V.
+                representative:
+                  type: string
+                  example: John Doe Test
+                rfc:
+                  type: string
+                  example: MJO002356S76
+                email:
+                  type: string
+                  example: ejemplo@test.com
+                phoneNumber:
+                  type: string
+                  example: +524458275377
+      responses:
+        '201':    # status code
+          description: Socio creado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Socio creado
+                  partner:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 1d3f1294-9eb5-481a-987e-8896e67ab651
+                      name:
+                        type: string
+                        example: Empresa de pruebas
+                      legalName:
+                        type: string
+                        example: Empresa de pruebas S.A. de C.V.
+                      representative:
+                        type: string
+                        example: John Doe Test
+                      rfc:
+                        type: string
+                        example: MJO002356S76
+                      email:
+                        type: string
+                        example: ejemplo@test.com
+                      phoneNumber:
+                        type: string
+                        example: +524458275377
+        '400':
+          description: Hay errores u omisiones en el input, para mas informacion revisar el response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Error en el input
+                  errores:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: test
+                        property:
+                          type: string
+                          example: field
+                        children:
+                          type: array
+                          items:
+                            type: string
+                            example: test
+                        contraints:
+                          type: object
+                          properties:
+                            isString:
+                              type: string
+                              example: name must be a string
+        '405':
+          description: Error del cliente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: El empleado actualmente tiene funciones activas en el sistema
+  /collaborators/partners/{partnerId}:
+    get:
+      summary: Obtiene los socios registrados en el sistema.
+      description: Obtiene un arreglo con los socios registrados en el sistema.
+      tags: [Colaboradores - Socios]
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: partnerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':    # status code
+          description: Muestra la lista de instalaciones
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                  locations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 1
+                        name:
+                          type: string
+                          example: Oficina de pruebas
+                        owner:
+                          type: string
+                          example: Corporativo HCS
+                        address:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            municipality:
+                              type: string
+                              example: Gustavo A. Madero
+                            state:
+                              type: string
+                              example: CDMX
+                        hr:
+                          type: object
+                          properties:
+                            total:
+                              type: integer
+                              example: 15
+                            hired:
+                              type: integer
+                              example: 1
+    delete:
+      summary: Elimina un socio
+      description: El socio solo puede ser eliminado si no tiene servicios asociados a el
+      tags: [Colaboradores - Socios]
+      parameters:
+      - name: token
+        in: header
+        required: true
+      - name: partnerId
+        in: path
+        required: true
+      responses:
+        '200':    # status code
+          description: Socio eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employee:
+                    type: object
+                    properties:
+                      server:
+                        type: string
+                        example: Socio eliminado
+        '404':    # status code
+          description: Socio no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employee:
+                    type: object
+                    properties:
+                      server:
+                        type: string
+                        example: Socio no encontrado
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto
