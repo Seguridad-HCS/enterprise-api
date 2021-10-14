@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locaciones registradas', () => {
+describe('GET /api/collaborators/locations?owner=<0,1> - Muestra las locaciones', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locac
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locac
   });
   it('200 - Parametros: ninguno Listado de ubicaciones', (done) => {
     request(app)
-      .get('/collaborators/locations')
+      .get('/api/collaborators/locations')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -52,7 +52,7 @@ describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locac
   });
   it('200 - Parametros: owner=0 Listado de ubicaciones internas de HCS', (done) => {
     request(app)
-      .get('/collaborators/locations?owner=0')
+      .get('/api/collaborators/locations?owner=0')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -68,7 +68,7 @@ describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locac
   });
   it('200 - Parametros: owner=1 Listado de ubicaciones de socios', (done) => {
     request(app)
-      .get('/collaborators/locations?owner=1')
+      .get('/api/collaborators/locations?owner=1')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -84,7 +84,7 @@ describe('GET /collaborators/locations?owner=<0,1> - Ruta para mostrar las locac
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/locations`)
+      .get(`/api/collaborators/locations`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

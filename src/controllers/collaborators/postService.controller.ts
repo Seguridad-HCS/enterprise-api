@@ -7,7 +7,7 @@ export default async (req: Request, res: Response): Promise<void> => {
   try {
     const partner = new Partner();
     await partner.getPartner(req.body.partner);
-    if (partner.canCreateService()) {
+    if (await partner.canCreateService()) {
       const service = new Service(req.body);
       await service.save().then(() => {
         res.status(201).json({

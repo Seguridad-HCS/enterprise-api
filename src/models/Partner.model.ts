@@ -5,7 +5,10 @@ import {
   PrimaryColumn,
   OneToMany,
   BaseEntity,
-  getRepository
+  getRepository,
+  OneToOne,
+  JoinColumn,
+  BeforeUpdate
 } from 'typeorm';
 import { IsOptional, IsUUID, Length, validateOrReject } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,6 +18,7 @@ import bcrypt from 'bcrypt';
 
 import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
+import Billing from 'models/Billing.model';
 
 interface InewPartner {
   name: string;
@@ -25,16 +29,47 @@ interface InewPartner {
   email: string;
 }
 
+interface IuserContacts {
+  id?: string;
+  name?: string;
+  role?: string;
+  phoneNumber?: string;
+  email?: string;
+}
+interface IuserServices {
+  id?: string;
+  status?: string;
+  startDate?: Date;
+  endDate?: Date;
+}
+
 interface ImultiplePartners {
-  id: string;
-  name: string;
-  representative: string;
+  id?: string;
+  name?: string;
+  representative?: string;
   services: Array<IserviceInfo>;
 }
 
 interface IserviceInfo {
   id?: string;
   status?: string;
+}
+
+interface IaddressData {
+  street?: string | null;
+  outNumber?: string | null;
+  intNumber?: string | null;
+  neighborhood?: string | null;
+  zip?: string | null;
+  municipality?: string | null;
+  state?: string | null;
+}
+
+interface IbillingData {
+  method?: string | null;
+  chequeno?: string | null;
+  account?: string | null;
+  address?: IaddressData | null;
 }
 
 @Entity({ name: 'partner' })
@@ -78,6 +113,12 @@ export default class Partner extends BaseEntity {
   @OneToMany(() => PartnerContact, (contact) => contact.partner)
   contacts?: PartnerContact[];
 
+  @Column({ nullable: true })
+  billingId?: string;
+  @OneToOne(() => Billing, { cascade: true, nullable: true })
+  @JoinColumn({ name: 'billingId' })
+  billing?: Billing;
+
   public constructor(params?: InewPartner) {
     super();
     if (params) {
@@ -90,10 +131,14 @@ export default class Partner extends BaseEntity {
     }
   }
 
-  public canCreateService(): boolean {
+  public async canCreateService(): Promise<boolean> {
     let flag = true;
-    this.services?.forEach((service) => {
-      if (['registro', 'negociacion'].includes(service.status!)) {
+    const services = await this.getServices();
+    services.forEach((service: Service) => {
+      if (
+        service.status == undefined ||
+        ['registro', 'negociacion'].includes(service.status)
+      ) {
         flag = false;
         return;
       }
@@ -101,10 +146,14 @@ export default class Partner extends BaseEntity {
     return flag;
   }
 
-  public canDeleteLastContact(): boolean {
+  public async canDeleteLastContact(): Promise<boolean> {
     let flag = true;
-    this.services?.forEach((service) => {
-      if (['negociacion', 'preactivo', 'activo'].includes(service.status!)) {
+    const services = await this.getServices();
+    services.forEach((service) => {
+      if (
+        service.status == undefined ||
+        ['negociacion', 'preactivo', 'activo'].includes(service.status)
+      ) {
         flag = false;
         return;
       }
@@ -113,13 +162,12 @@ export default class Partner extends BaseEntity {
   }
 
   // TODO agregar validacion de no service (regla de negocio)
-  public async getPartner(partnerId: string) {
+  public async getPartner(partnerId: string): Promise<void> {
     if (!(uuidValidate(partnerId) && uuidVersion(partnerId) === 4))
       throw Error('No partner');
     const query = await getRepository(Partner)
       .createQueryBuilder('partner')
-      .leftJoinAndSelect('partner.contacts', 'contacts')
-      .leftJoinAndSelect('partner.services', 'services')
+      .leftJoinAndSelect('partner.billing', 'billing')
       .where('partner.id = :partnerId', { partnerId })
       .getOne();
     if (query == undefined) throw Error('No partner');
@@ -130,21 +178,74 @@ export default class Partner extends BaseEntity {
     this.representative = query.representative;
     this.phoneNumber = query.phoneNumber;
     this.email = query.email;
-    this.contacts = query.contacts;
-    this.services = query.services;
-    return this.formatPartner();
+    this.billing = query.billing;
   }
 
-  public async getAllPartners() {
-    const partners = await getRepository(Partner)
-      .createQueryBuilder('partner')
-      .leftJoinAndSelect('partner.services', 'services')
+  public async getContacts(): Promise<PartnerContact[]> {
+    if (this.id === undefined) throw Error('No partner');
+    const contacts = await getRepository(PartnerContact)
+      .createQueryBuilder('contact')
+      .where('contact.partner = :partnerId', { partnerId: this.id })
       .getMany();
-    return this.formatPartners(partners);
+    return contacts;
   }
 
-  public formatPartner() {
-    return {
+  public async getServices(): Promise<Service[]> {
+    if (this.id === undefined) throw Error('No partner');
+    const services = await getRepository(Service)
+      .createQueryBuilder('service')
+      .where('service.partner = :partnerId', { partnerId: this.id })
+      .getMany();
+    return services;
+  }
+
+  public async getFullRegister() {
+    const contacts = await this.getContacts();
+    const services = await this.getServices();
+    const userContacts: IuserContacts[] = [];
+    const userServices: IuserServices[] = [];
+    let billing: IbillingData | null = null;
+    if (this.billing !== null) {
+      let address: IaddressData | null = null;
+      await this.billing?.getAddress();
+      if (this.billing?.address !== null) {
+        address = {
+          street: this.billing?.address?.street,
+          intNumber: this.billing?.address?.intNumber,
+          outNumber: this.billing?.address?.outNumber,
+          neighborhood: this.billing?.address?.neighborhood,
+          municipality: this.billing?.address?.municipality,
+          state: this.billing?.address?.state,
+          zip: this.billing?.address?.zip
+        };
+      }
+      billing = {
+        method: this.billing?.method,
+        chequeno: this.billing?.account,
+        account: this.billing?.account,
+        address
+      };
+    }
+    contacts.forEach((contact: PartnerContact) => {
+      const formatted = {
+        id: contact.id,
+        name: contact.name,
+        role: contact.role,
+        phoneNumber: contact.phoneNumber,
+        email: contact.email
+      };
+      userContacts.push(formatted);
+    });
+    services.forEach((service: Service) => {
+      const formatted = {
+        id: service.id,
+        status: service.status,
+        startDate: service.startDate,
+        endDate: service.endDate
+      };
+      userServices.push(formatted);
+    });
+    const response = {
       id: this.id,
       name: this.name,
       legalName: this.legalName,
@@ -152,17 +253,24 @@ export default class Partner extends BaseEntity {
       representative: this.representative,
       phoneNumber: this.phoneNumber,
       email: this.email,
-      contacts: this.contacts
+      billing,
+      contacts: userContacts,
+      services: userServices
     };
+    return response;
   }
 
-  public formatPartners(partners: Partner[]) {
+  public async getAllPartners(): Promise<ImultiplePartners[]> {
+    const partners = await getRepository(Partner)
+      .createQueryBuilder('partner')
+      .leftJoinAndSelect('partner.services', 'services')
+      .getMany();
     const res: ImultiplePartners[] = [];
     partners.forEach((partner) => {
       const formatted: ImultiplePartners = {
-        id: partner.id!,
-        name: partner.name!,
-        representative: partner.representative!,
+        id: partner.id,
+        name: partner.name,
+        representative: partner.representative,
         services: []
       };
       partner.services?.forEach((service) => {
@@ -178,17 +286,23 @@ export default class Partner extends BaseEntity {
     });
     return res;
   }
-
   public setPassword(password: string): void {
     const salt = bcrypt.genSaltSync(10);
     this.password = bcrypt.hashSync(password, salt);
   }
-
-  @BeforeInsert()
-  async validateModel(): Promise<void> {
-    this.id = uuidv4();
+  public async validateInstance(): Promise<void> {
     await validateOrReject(this, {
       validationError: { value: true, target: false }
     });
+  }
+
+  @BeforeInsert()
+  async insertDb(): Promise<void> {
+    this.id = uuidv4();
+    await this.validateInstance();
+  }
+  @BeforeUpdate()
+  async updateDb(): Promise<void> {
+    await this.validateInstance();
   }
 }

@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de locacion', () => {
+describe('POST /api/collaborators/locations/profiles - Ruta de creacion de perfil de locacion', () => {
   let token: string;
   let locationId: string;
   let positionId: string;
@@ -17,20 +17,20 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/locations')
+            .get('/api/collaborators/locations')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
               locationId = res.body.locations[0].id;
               request(app)
-                .get('/collaborators/employees/positions')
+                .get('/api/collaborators/employees/positions')
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
@@ -47,7 +47,7 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   });
   it('201 - Perfil de locacion registrado', (done) => {
     request(app)
-      .post('/collaborators/locations/profiles')
+      .post('/api/collaborators/locations/profiles')
       .set('token', token)
       .send({
         total: 1,
@@ -80,7 +80,7 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   });
   it('400 - Error en el input', (done) => {
     request(app)
-      .post('/collaborators/locations/profiles')
+      .post('/api/collaborators/locations/profiles')
       .set('token', token)
       .send({
         eltotal: 1,
@@ -103,7 +103,7 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   });
   it('404 - Llaves foraneas validas o incorrectas', (done) => {
     request(app)
-      .post('/collaborators/locations/profiles')
+      .post('/api/collaborators/locations/profiles')
       .set('token', token)
       .send({
         total: 1,
@@ -128,7 +128,7 @@ describe('POST /collaborators/locations/profiles - Ruta de creacion de perfil de
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/locations/profiles`)
+      .post(`/api/collaborators/locations/profiles`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

@@ -10,7 +10,7 @@ export default async (req: Request, res: Response): Promise<void> => {
     await contact.getContact(req.params.contactId);
     if (contact.partnerId === undefined) throw Error('No partner');
     await partner.getPartner(contact.partnerId);
-    if (partner.canDeleteLastContact()) {
+    if (await partner.canDeleteLastContact()) {
       await contact
         .remove()
         .then(() => {

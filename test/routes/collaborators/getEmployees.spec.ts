@@ -9,7 +9,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores registrados', () => {
+describe('GET /api/collaborators/employees - Muestra a los colaboradores', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -18,7 +18,7 @@ describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores r
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -33,7 +33,7 @@ describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores r
   });
   it('200 - Muestra a los colaboradores', (done) => {
     request(app)
-      .get(`/collaborators/employees`)
+      .get(`/api/collaborators/employees`)
       .set('token', token)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
@@ -57,7 +57,7 @@ describe('GET /collaborators/employees - Ruta para mostrar a los colaboradores r
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/employees`)
+      .get(`/api/collaborators/employees`)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(405)
       .end((err, res) => {

@@ -1,27 +1,31 @@
-import { Request, Response } from 'express';
-import Partner from 'models/Partner.model';
-import PartnerContact from 'models/PartnerContact.model';
-import removeUndefined from 'helpers/removeUndefined.helper';
 import { ValidationError } from 'class-validator';
+import { Request, Response } from 'express';
 import logger from 'logger';
+import Billing from 'models/Billing.model';
+import Partner from 'models/Partner.model';
+import removeUndefined from 'helpers/removeUndefined.helper';
+import BillingAddress from 'models/BillingAddress.model';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
     const partner = new Partner();
-    await partner.getPartner(req.body.partner);
-    if ((await partner.getContacts()).length + 1 > 5)
+    await partner.getPartner(req.params.partnerId);
+    if (partner.billing === null)
       res.status(405).json({
-        server: 'Se ha alcanzado el numero maximo de registros'
+        server: 'La informacion de facturacion general no ha sido actualizada'
       });
     else {
-      const contact = new PartnerContact(req.body);
-      await contact
+      await partner.billing?.getAddress();
+      if (partner.billing?.address === null)
+        partner.billing.address = new BillingAddress(req.body);
+      else partner.billing?.address?.update(req.body);
+      await partner
         .save()
         .then(() => {
-          const response = contact.formatContact();
-          res.status(201).json({
-            server: 'Contacto creado',
-            contact: response
+          delete partner.billing?.address?.id;
+          res.status(200).json({
+            server: 'Direccion de facturacion actualizada',
+            address: partner.billing?.address
           });
         })
         .catch((err) => {

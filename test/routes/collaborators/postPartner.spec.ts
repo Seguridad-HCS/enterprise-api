@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/partners - Registra a un colaborador en el sistema', () => {
+describe('POST /api/collaborators/partners - Registra a un colaborador en el sistema', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('POST /collaborators/partners - Registra a un colaborador en el sistema
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('POST /collaborators/partners - Registra a un colaborador en el sistema
   });
   it('201 - Socio registrado', (done) => {
     request(app)
-      .post('/collaborators/partners')
+      .post('/api/collaborators/partners')
       .set('token', token)
       .send({
         name: 'Oxxo',
@@ -50,7 +50,7 @@ describe('POST /collaborators/partners - Registra a un colaborador en el sistema
   });
   it('400 - Error en el input', (done) => {
     request(app)
-      .post('/collaborators/partners')
+      .post('/api/collaborators/partners')
       .set('token', token)
       .send({
         nane: 'Oxxo',
@@ -70,7 +70,7 @@ describe('POST /collaborators/partners - Registra a un colaborador en el sistema
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/partners`)
+      .post(`/api/collaborators/partners`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colaborador', () => {
+describe('POST /api/collaborators/auth/logout - Ruta para cerrar sesion de un colaborador', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colabo
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colabo
   });
   it('200 - Sesion finalizada exitosamente', (done) => {
     request(app)
-      .post('/collaborators/auth/logout')
+      .post('/api/collaborators/auth/logout')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -42,7 +42,7 @@ describe('POST /collaborators/auth/logout - Ruta para cerrar sesion de un colabo
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post('/collaborators/auth/logout')
+      .post('/api/collaborators/auth/logout')
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

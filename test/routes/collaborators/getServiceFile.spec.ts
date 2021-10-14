@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descargar un archivo de servicio', () => {
+describe('GET /api/collaborators/services/<serviceId>/<fileName> - Ruta para descargar un archivo de servicio', () => {
   let token: string;
   let serviceId: string;
   const loginData = {
@@ -16,14 +16,14 @@ describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descarg
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .expect('Content-type', /json/)
             .expect(200)
@@ -44,7 +44,7 @@ describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descarg
   });
   it('200 - Obtiene el archivo del servicio', (done) => {
     request(app)
-      .get(`/collaborators/services/${serviceId}/constitutiveAct`)
+      .get(`/api/collaborators/services/${serviceId}/constitutiveAct`)
       .set('token', token)
       .expect('Content-type', 'application/pdf')
       .expect(200)
@@ -55,7 +55,7 @@ describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descarg
   });
   it('404 - El servicio no fue encontrado', (done) => {
     request(app)
-      .get(`/collaborators/services/thisIsATest/constitutiveAct`)
+      .get(`/api/collaborators/services/thisIsATest/constitutiveAct`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -67,7 +67,7 @@ describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descarg
   });
   it('404 - Nombre del archivo inexistente', (done) => {
     request(app)
-      .get(`/collaborators/services/${serviceId}/thisIsATest`)
+      .get(`/api/collaborators/services/${serviceId}/thisIsATest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -79,7 +79,7 @@ describe('GET /collaborators/services/<serviceId>/<fileName> - Ruta para descarg
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/services/${serviceId}/constitutiveAct`)
+      .get(`/api/collaborators/services/${serviceId}/constitutiveAct`)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(405)
       .end((err, res) => {

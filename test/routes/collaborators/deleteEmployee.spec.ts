@@ -9,7 +9,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un colaborador', () => {
+describe('DELETE /api/collaborators/employees/<employeeId> - Elimina un colaborador', () => {
   let token: string;
   let employeeId: string;
   const loginData = {
@@ -19,14 +19,14 @@ describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un c
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some employeeId
           request(app)
-            .get('/collaborators/employees')
+            .get('/api/collaborators/employees')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
@@ -42,7 +42,7 @@ describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un c
   });
   it('200 - Elimina a un colaborador', (done) => {
     request(app)
-      .delete(`/collaborators/employees/${employeeId}`)
+      .delete(`/api/collaborators/employees/${employeeId}`)
       .set('token', token)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200)
@@ -54,7 +54,7 @@ describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un c
   });
   it('404 - Colaborador no encontrado', (done) => {
     request(app)
-      .delete(`/collaborators/employees/1`)
+      .delete(`/api/collaborators/employees/1`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(404)
@@ -66,7 +66,7 @@ describe('DELETE /collaborators/employees/<employeeId> - Ruta para eliminar un c
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/collaborators/employees/${employeeId}`)
+      .delete(`/api/collaborators/employees/${employeeId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

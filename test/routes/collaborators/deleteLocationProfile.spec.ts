@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
+describe('DELETE /api/collaborators/locations/profiles/<profileId> - Elimina un perfil de locacion', () => {
   let token: string;
   let locationId: string;
   let profileWithEmployees: string;
@@ -18,20 +18,20 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/locations')
+            .get('/api/collaborators/locations')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
               locationId = res.body.locations[0].id;
               request(app)
-                .get(`/collaborators/locations/${locationId}`)
+                .get(`/api/collaborators/locations/${locationId}`)
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
@@ -52,7 +52,9 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   });
   it('200 - Elimina un perfil asociado a una locacion', (done) => {
     request(app)
-      .delete(`/collaborators/locations/profiles/${profileWithoutEmployees}`)
+      .delete(
+        `/api/collaborators/locations/profiles/${profileWithoutEmployees}`
+      )
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -64,7 +66,7 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   });
   it('404 - Perfil no encontrado', (done) => {
     request(app)
-      .delete(`/collaborators/locations/profiles/thisIsATest`)
+      .delete(`/api/collaborators/locations/profiles/thisIsATest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -76,7 +78,7 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   });
   it('405 - No se puede eliminar un perfil con colaboradores', (done) => {
     request(app)
-      .delete(`/collaborators/locations/profiles/${profileWithEmployees}`)
+      .delete(`/api/collaborators/locations/profiles/${profileWithEmployees}`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(405)
@@ -90,7 +92,7 @@ describe('DELETE /collaborators/locations/profiles/<profileId>', () => {
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/collaborators/locations/profiles/${profileWithEmployees}`)
+      .delete(`/api/collaborators/locations/profiles/${profileWithEmployees}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

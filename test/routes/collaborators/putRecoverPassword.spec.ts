@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/recover - Restablece la contraseña del colaborador', () => {
+describe('PUT /api/collaborators/auth/recover - Restablece la contraseña del colaborador', () => {
   before((done) => {
     dbConnection().then(() => done());
   });
@@ -16,7 +16,7 @@ describe('POST /collaborators/auth/recover - Restablece la contraseña del colab
   });
   it('200 - Se ha restablecido la contraseña del colaborador TESTEO PENDIENTE', (done) => {
     request(app)
-      .put('/collaborators/auth/recover')
+      .put('/api/collaborators/auth/recover')
       .expect('Content-type', /json/)
       .expect(200)
       .end((err, res) => {

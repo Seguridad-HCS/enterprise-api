@@ -1,18 +1,24 @@
+import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
+import logger from 'logger';
+import Billing from 'models/Billing.model';
 import Partner from 'models/Partner.model';
 import removeUndefined from 'helpers/removeUndefined.helper';
-import { ValidationError } from 'class-validator';
-import logger from 'logger';
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
-    const partner = new Partner(req.body);
+    const partner = new Partner();
+    await partner.getPartner(req.params.partnerId);
+    if (partner.billing === null) partner.billing = new Billing(req.body);
+    else partner.billing?.update(req.body);
     await partner
       .save()
       .then(() => {
-        res.status(201).json({
-          server: 'Socio creado',
-          partner
+        delete partner.billing?.addressId;
+        delete partner.billing?.id;
+        res.status(200).json({
+          server: 'Informacion de facturacion actualizada',
+          billing: partner.billing
         });
       })
       .catch((err) => {
@@ -26,11 +32,6 @@ export default async (req: Request, res: Response): Promise<void> => {
           res.status(404).json({
             server: 'Llaves foraneas invalidas o incorrectas'
           });
-        else if ('23505' === err.code)
-          res.status(405).json({
-            server:
-              'Alguno de los siguientes campos (nombre, nombre legal, email) ya han sido registrados en el sistema'
-          });
         else {
           logger.error(err);
           res.status(500).json({
@@ -40,10 +41,16 @@ export default async (req: Request, res: Response): Promise<void> => {
       });
   } catch (err) {
     if (err instanceof Error) {
-      logger.error(err);
-      res.status(500).json({
-        server: 'Error interno en el servidor'
-      });
+      if (err.message === 'No partner')
+        res.status(404).json({
+          server: 'Socio no encontrado'
+        });
+      else {
+        logger.error(err);
+        res.status(500).json({
+          server: 'Error interno en el servidor'
+        });
+      }
     }
   }
 };

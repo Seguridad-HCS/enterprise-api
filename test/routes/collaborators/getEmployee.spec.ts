@@ -10,7 +10,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colaborador especifico', () => {
+describe('GET /api/collaborators/employees/{employeeId} - Muestra un colaborador especifico', () => {
   let token: string;
   let employeeId: string;
   let newEmployeeId: string;
@@ -21,7 +21,7 @@ describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colab
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -41,7 +41,7 @@ describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colab
   });
   it('200 - Muestra el registro completo de un colaborador', (done) => {
     request(app)
-      .get(`/collaborators/employees/${employeeId}`)
+      .get(`/api/collaborators/employees/${employeeId}`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -71,7 +71,7 @@ describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colab
   });
   it('404 - El empleado no fue encontrado', (done) => {
     request(app)
-      .get(`/collaborators/employees/${newEmployeeId}`)
+      .get(`/api/collaborators/employees/${newEmployeeId}`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(404)
@@ -83,7 +83,7 @@ describe('GET /collaborators/employees/{employeeId} - Ruta para mostrar un colab
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/employees/${newEmployeeId}`)
+      .get(`/api/collaborators/employees/${newEmployeeId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

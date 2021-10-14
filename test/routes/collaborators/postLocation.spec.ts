@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/locations - Ruta de creacion de locaciones', () => {
+describe('POST /api/collaborators/locations - Ruta de creacion de locaciones', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
   });
   it('201 - Ubicacion sin servicio creada', (done) => {
     request(app)
-      .post('/collaborators/locations')
+      .post('/api/collaborators/locations')
       .set('token', token)
       .send({
         name: 'Oficina de pruebas2',
@@ -55,7 +55,7 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
   });
   it('400 - Error en el input', (done) => {
     request(app)
-      .post('/collaborators/locations')
+      .post('/api/collaborators/locations')
       .set('token', token)
       .send({
         name: 'Oficina de pruebas2',
@@ -79,7 +79,7 @@ describe('POST /collaborators/locations - Ruta de creacion de locaciones', () =>
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/locations`)
+      .post(`/api/collaborators/locations`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

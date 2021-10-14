@@ -7,7 +7,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/services/file - Ruta de creacion de archivo de servicio', () => {
+describe('POST /api/collaborators/services/file - Ruta de creacion de archivo de servicio', () => {
   let token: string;
   let serviceId: string;
   const loginData = {
@@ -17,14 +17,14 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
@@ -43,7 +43,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('201 - Acta constitutiva actualizada - Etapa de registro', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .field('file', 'constitutiveAct')
       .field('service', serviceId)
@@ -58,7 +58,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('201 - Poder notarial actualizado - Etapa de registro', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .field('file', 'powerOfAttorney')
       .field('service', serviceId)
@@ -73,7 +73,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('201 - Comprobante de domicilio creado - Etapa de registro', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .field('file', 'addressProof')
       .field('service', serviceId)
@@ -88,7 +88,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('201 - Ine creada - Etapa de registro', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .field('file', 'ine')
       .field('service', serviceId)
@@ -104,7 +104,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   it('404 - El servicio no fue encontrado', (done) => {
     // TODO especificar el objeto que se recibe
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .send({
         partnerId: 'thisisatest'
@@ -119,7 +119,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('405 - El nombre del archivo no coincide con la etapa del servicio', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .field('file', 'thisisatest')
       .field('service', serviceId)
@@ -136,7 +136,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('405 - Archivo bloqueado PENDIENTE DE TESTEAR', (done) => {
     request(app)
-      .post('/collaborators/services/files')
+      .post('/api/collaborators/services/files')
       .set('token', token)
       .send({
         partner: serviceId
@@ -151,7 +151,7 @@ describe('POST /collaborators/services/file - Ruta de creacion de archivo de ser
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/services/files`)
+      .post(`/api/collaborators/services/files`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

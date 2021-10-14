@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto de un socio', () => {
+describe('POST /api/collaborators/partners/contacts - Ruta de creacion de contacto de un socio', () => {
   let token: string;
   let partnerId: string;
   const loginData = {
@@ -16,14 +16,14 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
@@ -39,7 +39,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   });
   it('201 - Contacto creado exitosamente', (done) => {
     request(app)
-      .post('/collaborators/partners/contacts')
+      .post('/api/collaborators/partners/contacts')
       .set('token', token)
       .send({
         name: 'John Doe Test',
@@ -64,7 +64,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   });
   it('400 - Error en el input', (done) => {
     request(app)
-      .post('/collaborators/partners/contacts')
+      .post('/api/collaborators/partners/contacts')
       .set('token', token)
       .send({
         nane: 'John Doe Test',
@@ -84,7 +84,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   it('404 - El socio no fue encontrado', (done) => {
     // TODO especificar el objeto que se recibe
     request(app)
-      .post('/collaborators/partners/contacts')
+      .post('/api/collaborators/partners/contacts')
       .set('token', token)
       .send({
         name: 'John Doe Test',
@@ -106,7 +106,7 @@ describe('POST /collaborators/partners/contacts - Ruta de creacion de contacto d
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/partners/contacts`)
+      .post(`/api/collaborators/partners/contacts`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

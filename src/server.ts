@@ -4,55 +4,24 @@ import helmet from 'helmet';
 import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
-import swaggerUI from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
 import * as fs from 'fs';
+import morgan from 'morgan';
 
 import routes from 'routes/index';
+import swaggerSetup from 'docs/swaggerSetup.doc';
 import morganMiddleware from 'middlewares/morgan.middleWare';
 
-// Swagger conf
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'HCS - Enterpise API',
-      version: '0.1.0',
-      description:
-        'Api creada para administrar la infresctructura de los endpoints disponibles dentro de HCS',
-      license: {
-        name: 'MIT',
-        url: 'https://spdx.org/licenses/MIT.html'
-      },
-      contact: {
-        name: 'Corporativo de seguridad HCS',
-        url: 'https://www.seguridadhcs.com/'
-      }
-    },
-    servers: [
-      {
-        url: 'http://localhost:1025/'
-      }
-    ]
-  },
-  apis: ['./src/docs/*.yml']
-};
-const specs = swaggerJsdoc(options);
-
 export default function createServer(): express.Application {
+  dotenv.config();
   if (!fs.existsSync(path.resolve(__dirname, '../../files'))) {
     fs.mkdirSync(path.resolve(__dirname, '../../files'));
   }
   const app: Application = express();
-  dotenv.config();
   app.set('PORT', parseInt(<string>process.env.SERVER_PORT, 10) || 4000);
-  if (process.env.NODE_ENV !== 'test') app.use(morganMiddleware);
+  if (process.env.NODE_ENV === 'prod') app.use(morganMiddleware);
   if (process.env.NODE_ENV === 'dev') {
-    app.use(
-      '/api-docs',
-      swaggerUI.serve,
-      swaggerUI.setup(specs, { explorer: true })
-    );
+    app.use(morgan('dev'));
+    app.use(swaggerSetup);
   }
   app.use(express.static('public'));
   app.use(helmet());
@@ -71,6 +40,6 @@ export default function createServer(): express.Application {
       exposedHeaders: ['Content-Type', 'Content-disposition', 'token']
     })
   );
-  app.use(routes);
+  app.use('/api', routes);
   return app;
 }

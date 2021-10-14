@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/employees/positions - Ruta para mostrar las posiciones registradas', () => {
+describe('GET /api/collaborators/employees/positions - Ruta para mostrar las posiciones registradas', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('GET /collaborators/employees/positions - Ruta para mostrar las posicio
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('GET /collaborators/employees/positions - Ruta para mostrar las posicio
   });
   it('200 - Muestra a las posiciones registradas en el sistema', (done) => {
     request(app)
-      .get('/collaborators/employees/positions')
+      .get('/api/collaborators/employees/positions')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -48,7 +48,7 @@ describe('GET /collaborators/employees/positions - Ruta para mostrar las posicio
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get('/collaborators/employees/positions')
+      .get('/api/collaborators/employees/positions')
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

@@ -6,12 +6,12 @@ import { expect } from 'chai';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradores', () => {
+describe('POST /api/collaborators/auth/login - Ruta de autenticacion de colaboradores', () => {
   before(async () => await dbConnection());
   after(async () => await getConnection().close());
   it('200 - Credenciales correctas', (done) => {
     request(app)
-      .post('/collaborators/auth/login')
+      .post('/api/collaborators/auth/login')
       .send({
         email: 'seguridadhcsdevs@gmail.com',
         password: 'thisIsAtest98!'
@@ -28,7 +28,7 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
   });
   it('404 - Email incorrecto', (done) => {
     request(app)
-      .post('/collaborators/auth/login')
+      .post('/api/collaborators/auth/login')
       .send({
         email: 'seguridadhcsdevs@gmail.como',
         password: 'thisIsAtest98!'
@@ -44,7 +44,7 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
   });
   it('404 - Password incorrecto', (done) => {
     request(app)
-      .post('/collaborators/auth/login')
+      .post('/api/collaborators/auth/login')
       .send({
         email: 'seguridadhcsdevs@gmail.com',
         password: 'testtest'
@@ -60,7 +60,7 @@ describe('POST /collaborators/auth/login - Ruta de autenticacion de colaboradore
   });
   it('404 - Inyeccion SQL', (done) => {
     request(app)
-      .post('/collaborators/auth/login')
+      .post('/api/collaborators/auth/login')
       .send({
         email: ' or "1"="1"',
         password: ' or "1"="1"'

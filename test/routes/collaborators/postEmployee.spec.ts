@@ -10,7 +10,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('POST /collaborators/employees - Ruta de creacion de empleados', () => {
+describe('POST /api/collaborators/employees - Ruta de creacion de empleados', () => {
   let token: string;
   let newEmployeeId: string;
   let profileId: string;
@@ -21,20 +21,20 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random position Id
           request(app)
-            .get('/collaborators/locations')
+            .get('/api/collaborators/locations')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
               const locationId = res.body.locations[0].id;
               request(app)
-                .get(`/collaborators/locations/${locationId}`)
+                .get(`/api/collaborators/locations/${locationId}`)
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
@@ -52,7 +52,7 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   it('201 - Socio registrado', (done) => {
     // TODO especificar el objeto que se recibe
     request(app)
-      .post('/collaborators/employees/')
+      .post('/api/collaborators/employees/')
       .set('token', token)
       .send({
         name: 'Test',
@@ -77,7 +77,7 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   });
   it('400 - Error en el input', (done) => {
     request(app)
-      .post('/collaborators/employees/')
+      .post('/api/collaborators/employees/')
       .set('token', token)
       .send({
         name: 'Test',
@@ -103,7 +103,7 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   it('404 - Llaves foraneas validas o incorrectas', (done) => {
     // TODO especificar el objeto que se recibe
     request(app)
-      .post('/collaborators/employees/')
+      .post('/api/collaborators/employees/')
       .set('token', token)
       .send({
         name: 'Test',
@@ -130,7 +130,7 @@ describe('POST /collaborators/employees - Ruta de creacion de empleados', () => 
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post('/collaborators/employees')
+      .post('/api/collaborators/employees')
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

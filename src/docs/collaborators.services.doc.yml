@@ -195,9 +195,9 @@ paths:
           type: string
       responses:
         '200':    # status code
-          description: Se muestra el archivo del servicio
-        '405':
-          description: Error del cliente
+          description: Descarga el archivo solicitado
+        '404':
+          description: Nombre del archivo inexistente o no encontrado
           content:
             application/json:
               schema:
@@ -205,4 +205,14 @@ paths:
                 properties:
                   server:
                     type: string
-                    example: El perfil esta asociado a un servicio que no esta en etapa de registro
+                    example: Nombre del archivo inexistente
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto

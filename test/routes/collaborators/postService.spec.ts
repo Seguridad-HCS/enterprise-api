@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
+describe('POST /api/collaborators/service - Ruta de creacion de servicio', () => {
   let token: string;
   let partnerWithServices: string;
   let partnerWithoutServices: string;
@@ -17,14 +17,14 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
@@ -44,7 +44,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   });
   it('201 - Servicio creado exitosamente', (done) => {
     request(app)
-      .post('/collaborators/services')
+      .post('/api/collaborators/services')
       .set('token', token)
       .send({
         partner: partnerWithoutServices
@@ -61,7 +61,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   it('404 - El socio no fue encontrado', (done) => {
     // TODO especificar el objeto que se recibe
     request(app)
-      .post('/collaborators/services')
+      .post('/api/collaborators/services')
       .set('token', token)
       .send({
         partner: 'thisisatest'
@@ -76,7 +76,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   });
   it('405 - Ya hay un servicio en proceso', (done) => {
     request(app)
-      .post('/collaborators/services')
+      .post('/api/collaborators/services')
       .set('token', token)
       .send({
         partner: partnerWithServices
@@ -91,7 +91,7 @@ describe('POST /collaborators/service - Ruta de creacion de servicio', () => {
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .post(`/collaborators/services`)
+      .post(`/api/collaborators/services`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

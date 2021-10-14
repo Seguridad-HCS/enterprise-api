@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una locacion', () => {
+describe('DELETE /api/collaborators/locations/<locationId> - Elimina una locacion', () => {
   let token: string;
   let locationWithoutEmployees: number;
   let locationWithEmployees: number;
@@ -17,14 +17,14 @@ describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una 
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some employeeId
           request(app)
-            .get('/collaborators/locations')
+            .get('/api/collaborators/locations')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
@@ -44,7 +44,7 @@ describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una 
   });
   it('200 - Elimina una locacion sin colaboradores', (done) => {
     request(app)
-      .delete(`/collaborators/locations/${locationWithoutEmployees}`)
+      .delete(`/api/collaborators/locations/${locationWithoutEmployees}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(200)
@@ -56,7 +56,7 @@ describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una 
   });
   it('404 - Locacion no fue encontrada', (done) => {
     request(app)
-      .delete(`/collaborators/locations/1`)
+      .delete(`/api/collaborators/locations/1`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -68,7 +68,7 @@ describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una 
   });
   it('405 - No se puede eliminar una locacion con colaboradores', (done) => {
     request(app)
-      .delete(`/collaborators/locations/${locationWithEmployees}`)
+      .delete(`/api/collaborators/locations/${locationWithEmployees}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(405)
@@ -82,7 +82,7 @@ describe('DELETE /collaborators/locations/<locationId> - Ruta para eliminar una 
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/collaborators/locations/${locationWithoutEmployees}`)
+      .delete(`/api/collaborators/locations/${locationWithoutEmployees}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servicio en especifico', () => {
+describe('GET /api/collaborators/services/<serviceId> - Ruta para mostrar un servicio en especifico', () => {
   let token: string;
   let serviceId: string;
   const loginData = {
@@ -16,14 +16,14 @@ describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servici
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .expect('Content-type', /json/)
             .expect(200)
@@ -44,7 +44,7 @@ describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servici
   });
   it('200 - Muestra el registro completo de un servicio', (done) => {
     request(app)
-      .get(`/collaborators/services/${serviceId}`)
+      .get(`/api/collaborators/services/${serviceId}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(200)
@@ -55,7 +55,7 @@ describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servici
   });
   it('404 - El servicio no fue encontrado', (done) => {
     request(app)
-      .get(`/collaborators/services/thisisatest`)
+      .get(`/api/collaborators/services/thisisatest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -67,7 +67,7 @@ describe('GET /collaborators/services/<serviceId> - Ruta para mostrar un servici
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/services/${serviceId}`)
+      .get(`/api/collaborators/services/${serviceId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_PATH=./dist node dist/app.js",
+    "prod_seed": "NODE_PATH=./dist node dist/dbSeed.js",
     "build": "tsc -p . --excludeDirectories ./test",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts}' --quiet --fix",
     "staticdev": "ts-node -r tsconfig-paths/register src/app.ts",
@@ -38,6 +39,8 @@
     "nodemailer": "^6.6.5",
     "pg": "^8.7.1",
     "socket.io": "^4.2.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.37",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
@@ -69,8 +72,6 @@
     "prettier-eslint": "^13.0.0",
     "prettier-eslint-cli": "^5.0.1",
     "supertest": "^6.1.6",
-    "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.1.6",
     "ts-node": "^10.2.1",
     "tsconfig-paths": "^3.11.0",
     "typescript": "^4.4.3"

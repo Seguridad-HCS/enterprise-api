@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('POST /collaborators/auth/reboot - Solicita un token de recuperacion de correo', () => {
+describe('POST /api/collaborators/auth/reboot - Solicita un token de recuperacion de correo', () => {
   before((done) => {
     dbConnection().then(() => done());
   });
@@ -16,7 +16,7 @@ describe('POST /collaborators/auth/reboot - Solicita un token de recuperacion de
   });
   it('200 - Correo de recuperacion enviado al colaborador', (done) => {
     request(app)
-      .post('/collaborators/auth/reboot')
+      .post('/api/collaborators/auth/reboot')
       .send({
         email: 'seguridadhcsdevs@gmail.com'
       })

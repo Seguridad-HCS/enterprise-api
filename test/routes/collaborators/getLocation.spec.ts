@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una locacion especifica', () => {
+describe('GET /api/collaborators/locations/<locationId> - Muestra una locacion especifica', () => {
   let token: string;
   let locationId: number;
   const loginData = {
@@ -16,13 +16,13 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           request(app)
-            .get('/collaborators/locations')
+            .get('/api/collaborators/locations')
             .set('token', token)
             .expect('Content-type', /json/)
             .expect(200)
@@ -40,7 +40,7 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
   });
   it('200 - Muestra el registro completo de una locacion', (done) => {
     request(app)
-      .get(`/collaborators/locations/${locationId}`)
+      .get(`/api/collaborators/locations/${locationId}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(200)
@@ -50,7 +50,6 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
         expect(res.body.location.id).to.be.a('string');
         expect(res.body.location.name).to.be.a('string');
         expect(res.body.location.status).to.be.a('boolean');
-        expect(res.body.location.serviceId).to.be.not.undefined;
         expect(res.body.location.address).to.be.a('object');
         expect(res.body.location.profiles).to.be.an('array');
         done();
@@ -58,7 +57,7 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
   });
   it('404 - La locacion no fue encontrada', (done) => {
     request(app)
-      .get(`/collaborators/locations/thisIsaTest`)
+      .get(`/api/collaborators/locations/thisIsaTest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -70,7 +69,7 @@ describe('GET /collaborators/locations/<locationId> - Ruta para mostrar una loca
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/locations/${locationId}`)
+      .get(`/api/collaborators/locations/${locationId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

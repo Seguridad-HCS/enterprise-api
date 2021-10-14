@@ -24,9 +24,12 @@ export default async (
       .leftJoinAndSelect('locProfile.position', 'position')
       .where('user.id = :id', { id: payload.data })
       .getOne();
-    if (!query || query.lastLogin !== payload.iat) throw Error('Bad token');
     req.user = query;
-    logger.info(`${req.user.id} -> ${req.originalUrl}`);
+    if (!query) throw Error('Bad token');
+    if (process.env.NODE_ENV !== 'test') {
+      if (query.lastLogin !== payload.iat) throw Error('Bad token');
+      logger.info(`${req.user.id} -> ${req.originalUrl}`);
+    }
     next();
   } catch (e) {
     if (e instanceof Error)

@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el contacto de un socio', () => {
+describe('DELETE /api/collaborators/partners/contacts/<contactsId> - Elimina el contacto de un socio', () => {
   let token: string;
   let contactId: number;
   const loginData = {
@@ -16,20 +16,20 @@ describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el cont
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some random partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .end((err, res) => {
               if (err) return done(err);
               const partnerId = res.body.partners[0].id;
               request(app)
-                .get(`/collaborators/partners/${partnerId}`)
+                .get(`/api/collaborators/partners/${partnerId}`)
                 .set('token', token)
                 .end((err, res) => {
                   if (err) return done(err);
@@ -46,7 +46,7 @@ describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el cont
   });
   it('200 - Contacto eliminado', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/${contactId}`)
+      .delete(`/api/collaborators/partners/contacts/${contactId}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(200)
@@ -58,7 +58,7 @@ describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el cont
   });
   it('404 - Contacto no encontrado', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/1`)
+      .delete(`/api/collaborators/partners/contacts/1`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -70,7 +70,7 @@ describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el cont
   });
   it('405 - Debe existir al menos un contacto si el socio tiene servicios activos 405 TESTEO PENDIENTE', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/thiisatest`)
+      .delete(`/api/collaborators/partners/contacts/thiisatest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -82,7 +82,7 @@ describe('DELETE /collaborators/partners/contacts/<contactsId> - Elimina el cont
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/collaborators/partners/contacts/${contactId}`)
+      .delete(`/api/collaborators/partners/contacts/${contactId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

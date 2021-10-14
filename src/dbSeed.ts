@@ -12,6 +12,7 @@ import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
 import logger from 'logger';
+import Billing from 'models/Billing.model';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -164,10 +165,10 @@ const employee1 = new Employee({
 employee1.setPassword('thisIsAtest98!');
 
 const employee2 = new Employee({
-  name: 'Jane',
-  surname: 'Doe',
-  secondSurname: 'Test',
-  email: 'janedoe@gmail.com',
+  name: 'Julio',
+  surname: 'Perez',
+  secondSurname: 'Hernandez',
+  email: 'julsperez@outlook.com',
   nss: '8964296',
   bloodtype: 'A+',
   rfc: 'MASVO280605',
@@ -180,10 +181,10 @@ const employee2 = new Employee({
 employee1.setPassword('thisIsAtest98!');
 
 const employee3 = new Employee({
-  name: 'Obi',
-  surname: 'Wan',
-  secondSurname: 'Kenobi',
-  email: 'obiwan@gmail.com',
+  name: 'Oscar',
+  surname: 'Martinez',
+  secondSurname: 'Vazquez',
+  email: 'oscarmartinez1998lol@gmail.com',
   nss: '8964296',
   bloodtype: 'A+',
   rfc: 'MANAO280605',
@@ -219,6 +220,13 @@ const partner3 = new Partner({
   representative: 'Obi Wan Kenobi',
   phoneNumber: '+525511664477',
   email: 'jedi@sample.com'
+});
+
+// Partner billing
+const billing1 = new Billing({
+  method: 'Transferencia bancaria',
+  chequeno: '123456789765',
+  account: '45667890897685'
 });
 
 // Partner contacts
@@ -302,6 +310,7 @@ const seed = async () => {
     logger.debug('Empleados creados');
 
     // Create partners
+    partner1.billing = billing1;
     await partner1.save();
     await partner2.save();
     await partner3.save();

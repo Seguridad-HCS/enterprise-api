@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio en especifico', () => {
+describe('GET /api/collaborators/partners/<partnerId> - Ruta para mostrar un socio en especifico', () => {
   let token: string;
   let partnerId: string;
   const loginData = {
@@ -16,14 +16,14 @@ describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio e
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
           token = res.headers.token;
           // Get some partnerId
           request(app)
-            .get('/collaborators/partners')
+            .get('/api/collaborators/partners')
             .set('token', token)
             .expect('Content-type', /json/)
             .expect(200)
@@ -41,7 +41,7 @@ describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio e
   });
   it('200 - Muestra el registro completo de un socio', (done) => {
     request(app)
-      .get(`/collaborators/partners/${partnerId}`)
+      .get(`/api/collaborators/partners/${partnerId}`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(200)
@@ -60,7 +60,7 @@ describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio e
   });
   it('404 - El socio no fue encontrado', (done) => {
     request(app)
-      .get(`/collaborators/partners/1`)
+      .get(`/api/collaborators/partners/1`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -72,7 +72,7 @@ describe('GET /collaborators/partners/<partnerId> - Ruta para mostrar un socio e
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/collaborators/partners/${partnerId}`)
+      .get(`/api/collaborators/partners/${partnerId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

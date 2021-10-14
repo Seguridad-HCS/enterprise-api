@@ -6,7 +6,7 @@ import dbConnection from '../../../src/dbConnection';
 
 const app = createServer();
 
-describe('GET /collaborators/partners - Ruta para mostrar a los socios registrados', () => {
+describe('GET /api/collaborators/partners - Ruta para mostrar a los socios registrados', () => {
   let token: string;
   const loginData = {
     email: 'seguridadhcsdevs@gmail.com',
@@ -15,7 +15,7 @@ describe('GET /collaborators/partners - Ruta para mostrar a los socios registrad
   before((done) => {
     dbConnection().then(() => {
       request(app)
-        .post('/collaborators/auth/login')
+        .post('/api/collaborators/auth/login')
         .send(loginData)
         .end((err, res) => {
           if (err) return done(err);
@@ -30,7 +30,7 @@ describe('GET /collaborators/partners - Ruta para mostrar a los socios registrad
   });
   it('200 - Listado de socios', (done) => {
     request(app)
-      .get('/collaborators/partners')
+      .get('/api/collaborators/partners')
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -51,7 +51,7 @@ describe('GET /collaborators/partners - Ruta para mostrar a los socios registrad
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get('/collaborators/partners')
+      .get('/api/collaborators/partners')
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {

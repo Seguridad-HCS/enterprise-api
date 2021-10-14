@@ -7,7 +7,7 @@ export default async (req: Request, res: Response): Promise<void> => {
   try {
     const partner = new Partner();
     await partner.getPartner(req.params.partnerId);
-    if (partner.services !== undefined && partner.services.length > 0)
+    if ((await partner.getServices()).length > 0)
       res.status(405).json({
         server: 'No se puede eliminar un socio con servicios asociados'
       });

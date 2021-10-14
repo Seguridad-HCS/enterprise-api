@@ -1,5 +1,8 @@
 import morgan, { StreamOptions } from 'morgan';
 import logger from 'logger';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const stream: StreamOptions = {
   write: (message) => logger.http(message.trim())
