@@ -1,11 +1,14 @@
 import { expect } from 'chai';
-import * as jwt from 'jsonwebtoken';
+import { getConnection, getRepository } from 'typeorm';
 import request from 'supertest';
 import dotenv from 'dotenv';
-import { getConnection } from 'typeorm';
 
 import dbConnection from '../../../src/dbConnection';
 import createServer from '../../../src/server';
+
+import getToken from '../../helpers/getToken.helper';
+
+import Employee from '../../../src/models/Employee.model';
 
 const app = createServer();
 dotenv.config();
@@ -13,31 +16,13 @@ dotenv.config();
 describe('GET /api/collaborators/employees/{employeeId} - Muestra un colaborador especifico', () => {
   let token: string;
   let employeeId: string;
-  let newEmployeeId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          const payload = jwt.verify(
-            token,
-            <string>process.env.SERVER_TOKEN
-          ) as jwt.JwtPayload;
-          employeeId = payload.data;
-          done();
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    employeeId = await getEmployeeId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Muestra el registro completo de un colaborador', (done) => {
     request(app)
@@ -71,7 +56,7 @@ describe('GET /api/collaborators/employees/{employeeId} - Muestra un colaborador
   });
   it('404 - El empleado no fue encontrado', (done) => {
     request(app)
-      .get(`/api/collaborators/employees/${newEmployeeId}`)
+      .get(`/api/collaborators/employees/thisisatest`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(404)
@@ -83,7 +68,7 @@ describe('GET /api/collaborators/employees/{employeeId} - Muestra un colaborador
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/api/collaborators/employees/${newEmployeeId}`)
+      .get(`/api/collaborators/employees/${employeeId}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {
@@ -93,3 +78,9 @@ describe('GET /api/collaborators/employees/{employeeId} - Muestra un colaborador
       });
   });
 });
+const getEmployeeId = async (): Promise<string> => {
+  const employeeRepo = getRepository(Employee);
+  const employee = await employeeRepo.createQueryBuilder('employee').getOne();
+  if (!employee || !employee.id) throw Error('No employee');
+  return employee.id;
+};

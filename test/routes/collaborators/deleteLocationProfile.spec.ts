@@ -1,60 +1,30 @@
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import getToken from '../../helpers/getToken.helper';
+
+import LocationProfile from '../../../src/models/LocationProfile.model';
 
 const app = createServer();
 
 describe('DELETE /api/collaborators/locations/profiles/<profileId> - Elimina un perfil de locacion', () => {
   let token: string;
-  let locationId: string;
-  let profileWithEmployees: string;
-  let profileWithoutEmployees: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random partnerId
-          request(app)
-            .get('/api/collaborators/locations')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              locationId = res.body.locations[0].id;
-              request(app)
-                .get(`/api/collaborators/locations/${locationId}`)
-                .set('token', token)
-                .end((err, res) => {
-                  if (err) return done(err);
-                  res.body.location.profiles.forEach((profile: any) => {
-                    if (profile.employees.length > 0)
-                      profileWithEmployees = profile.id;
-                    else profileWithoutEmployees = profile.id;
-                  });
-                  done();
-                });
-            });
-        });
-    });
+  let profiles: string[];
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    // [0: no employees, 1: employees]
+    profiles = await getProfileIds();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Elimina un perfil asociado a una locacion', (done) => {
     request(app)
-      .delete(
-        `/api/collaborators/locations/profiles/${profileWithoutEmployees}`
-      )
+      .delete(`/api/collaborators/locations/profiles/${profiles[0]}`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(200)
@@ -78,7 +48,7 @@ describe('DELETE /api/collaborators/locations/profiles/<profileId> - Elimina un 
   });
   it('405 - No se puede eliminar un perfil con colaboradores', (done) => {
     request(app)
-      .delete(`/api/collaborators/locations/profiles/${profileWithEmployees}`)
+      .delete(`/api/collaborators/locations/profiles/${profiles[1]}`)
       .set('token', token)
       .expect('Content-type', /json/)
       .expect(405)
@@ -92,7 +62,7 @@ describe('DELETE /api/collaborators/locations/profiles/<profileId> - Elimina un 
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .delete(`/api/collaborators/locations/profiles/${profileWithEmployees}`)
+      .delete(`/api/collaborators/locations/profiles/${profiles[1]}`)
       .expect('Content-type', /json/)
       .expect(405)
       .end((err, res) => {
@@ -102,3 +72,19 @@ describe('DELETE /api/collaborators/locations/profiles/<profileId> - Elimina un 
       });
   });
 });
+const getProfileIds = async (): Promise<string[]> => {
+  const locProfileRepo = getRepository(LocationProfile);
+  const profiles = await locProfileRepo
+    .createQueryBuilder('profile')
+    .leftJoinAndSelect('profile.employees', 'employees')
+    .getMany();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const aux1 = profiles.find((profile) => profile.employees!.length > 0);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const aux2 = profiles.find((profile) => profile.employees!.length === 0);
+  if (!aux1 || !aux1.id) throw Error('No profile with employees');
+  if (!aux2 || !aux2.id) throw Error('No profile without service');
+  const withEmployees = aux2.id;
+  const withoutEmployees = aux1.id;
+  return [withEmployees, withoutEmployees];
+};

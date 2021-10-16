@@ -22,7 +22,7 @@ describe('PUT /api/collaborators/partner/<partnerId>/billing/address - Actualiza
         .where('partner.billing IS NULL')
         .getOne()
         .then((query) => {
-          partnerWithoutBilling = query ? query.id : 'thisIsatest';
+          partnerWithoutBilling = query ? query.id : undefined;
           request(app)
             .post('/api/collaborators/auth/login')
             .send(loginData)
@@ -87,7 +87,7 @@ describe('PUT /api/collaborators/partner/<partnerId>/billing/address - Actualiza
       .end((err, res) => {
         if (err) return done(err);
         expect(res.body.server).to.equal(
-          'Informacion de facturacion actualizada'
+          'Direccion de facturacion actualizada'
         );
         done();
       });
@@ -110,7 +110,7 @@ describe('PUT /api/collaborators/partner/<partnerId>/billing/address - Actualiza
       .end((err, res) => {
         if (err) return done(err);
         expect(res.body.server).to.equal(
-          'Informacion de facturacion actualizada'
+          'Direccion de facturacion actualizada'
         );
         done();
       });

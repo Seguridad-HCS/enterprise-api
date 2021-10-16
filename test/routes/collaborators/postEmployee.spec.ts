@@ -10,7 +10,7 @@ import createServer from '../../../src/server';
 const app = createServer();
 dotenv.config();
 
-describe('POST /api/collaborators/employees - Ruta de creacion de empleados', () => {
+describe('POST /api/collaborators/employees - Crea un empleado', () => {
   let token: string;
   let newEmployeeId: string;
   let profileId: string;

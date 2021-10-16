@@ -19,6 +19,7 @@ import bcrypt from 'bcrypt';
 import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
 import Billing from 'models/Billing.model';
+import BillingProcess from './BillingProcess.model';
 
 interface InewPartner {
   name: string;
@@ -70,6 +71,7 @@ interface IbillingData {
   chequeno?: string | null;
   account?: string | null;
   address?: IaddressData | null;
+  processes?: BillingProcess[];
 }
 
 @Entity({ name: 'partner' })
@@ -180,7 +182,6 @@ export default class Partner extends BaseEntity {
     this.email = query.email;
     this.billing = query.billing;
   }
-
   public async getContacts(): Promise<PartnerContact[]> {
     if (this.id === undefined) throw Error('No partner');
     const contacts = await getRepository(PartnerContact)
@@ -189,7 +190,6 @@ export default class Partner extends BaseEntity {
       .getMany();
     return contacts;
   }
-
   public async getServices(): Promise<Service[]> {
     if (this.id === undefined) throw Error('No partner');
     const services = await getRepository(Service)
@@ -198,7 +198,6 @@ export default class Partner extends BaseEntity {
       .getMany();
     return services;
   }
-
   public async getFullRegister() {
     const contacts = await this.getContacts();
     const services = await this.getServices();
@@ -208,6 +207,7 @@ export default class Partner extends BaseEntity {
     if (this.billing !== null) {
       let address: IaddressData | null = null;
       await this.billing?.getAddress();
+      await this.billing?.getProcesses();
       if (this.billing?.address !== null) {
         address = {
           street: this.billing?.address?.street,
@@ -223,7 +223,8 @@ export default class Partner extends BaseEntity {
         method: this.billing?.method,
         chequeno: this.billing?.account,
         account: this.billing?.account,
-        address
+        address,
+        processes: this.billing?.processes
       };
     }
     contacts.forEach((contact: PartnerContact) => {

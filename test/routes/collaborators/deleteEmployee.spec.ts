@@ -1,10 +1,14 @@
 import { expect } from 'chai';
 import request from 'supertest';
 import dotenv from 'dotenv';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 
 import dbConnection from '../../../src/dbConnection';
 import createServer from '../../../src/server';
+
+import getToken from '../../helpers/getToken.helper';
+
+import Employee from '../../../src/models/Employee.model';
 
 const app = createServer();
 dotenv.config();
@@ -12,33 +16,13 @@ dotenv.config();
 describe('DELETE /api/collaborators/employees/<employeeId> - Elimina un colaborador', () => {
   let token: string;
   let employeeId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some employeeId
-          request(app)
-            .get('/api/collaborators/employees')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              employeeId = res.body.employees[0].id;
-              done();
-            });
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    employeeId = await getEmployeeId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Elimina a un colaborador', (done) => {
     request(app)
@@ -76,3 +60,13 @@ describe('DELETE /api/collaborators/employees/<employeeId> - Elimina un colabora
       });
   });
 });
+
+const getEmployeeId = async (): Promise<string> => {
+  const emplRepo = getRepository(Employee);
+  const employee = await emplRepo
+    .createQueryBuilder('employee')
+    .where('employee.email != :email', { email: 'seguridadhcsdevs@gmail.com'})
+    .getOne();
+  if (!employee || !employee.id) throw Error('No employee');
+  return employee.id;
+};

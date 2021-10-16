@@ -1,48 +1,25 @@
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import getToken from '../../helpers/getToken.helper';
+
+import PartnerContact from '../../../src/models/PartnerContact.model';
 
 const app = createServer();
 
 describe('DELETE /api/collaborators/partners/contacts/<contactsId> - Elimina el contacto de un socio', () => {
   let token: string;
-  let contactId: number;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random partnerId
-          request(app)
-            .get('/api/collaborators/partners')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              const partnerId = res.body.partners[0].id;
-              request(app)
-                .get(`/api/collaborators/partners/${partnerId}`)
-                .set('token', token)
-                .end((err, res) => {
-                  if (err) return done(err);
-                  contactId = res.body.partner.contacts[0].id;
-                  done();
-                });
-            });
-        });
-    });
+  let contactId: string;
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    contactId = await getContactId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Contacto eliminado', (done) => {
     request(app)
@@ -92,3 +69,9 @@ describe('DELETE /api/collaborators/partners/contacts/<contactsId> - Elimina el 
       });
   });
 });
+const getContactId = async (): Promise<string> => {
+  const contactRepo = getRepository(PartnerContact);
+  const contact = await contactRepo.createQueryBuilder('contact').getOne();
+  if (!contact || !contact.id) throw Error('No contact');
+  return contact.id;
+};

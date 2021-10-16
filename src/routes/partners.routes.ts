@@ -9,6 +9,7 @@ import postPartnerContact from 'controllers/collaborators/postPartnerContact.con
 import deletePartnerContact from 'controllers/collaborators/deletePartnerContact.controller';
 import putBilling from 'controllers/collaborators/putBilling.controller';
 import putBillingAddress from 'controllers/collaborators/putBillingAddress.controller';
+import postBillingProcess from 'controllers/collaborators/postBillingProcess.controller';
 
 const router = Router();
 
@@ -19,8 +20,8 @@ router.get('/:partnerId', verifyToken, getPartner);
 router.delete('/:partnerId', verifyToken, deletePartner);
 
 router.put('/:partnerId/billing', verifyToken, putBilling);
-
 router.put('/:partnerId/billing/address', verifyToken, putBillingAddress);
+router.post('/:partnerId/billing/process', verifyToken, postBillingProcess);
 
 router.post('/contacts', verifyToken, postPartnerContact);
 router.delete('/contacts/:contactId', verifyToken, deletePartnerContact);

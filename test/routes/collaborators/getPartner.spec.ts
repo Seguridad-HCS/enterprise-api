@@ -1,43 +1,24 @@
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import getToken from '../../helpers/getToken.helper';
+import Partner from '../../../src/models/Partner.model';
 
 const app = createServer();
 
 describe('GET /api/collaborators/partners/<partnerId> - Ruta para mostrar un socio en especifico', () => {
   let token: string;
   let partnerId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some partnerId
-          request(app)
-            .get('/api/collaborators/partners')
-            .set('token', token)
-            .expect('Content-type', /json/)
-            .expect(200)
-            .end((err, res) => {
-              if (err) return done(err);
-              partnerId = res.body.partners[0].id;
-              done();
-            });
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    partnerId = await getPartnerId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Muestra el registro completo de un socio', (done) => {
     request(app)
@@ -82,3 +63,9 @@ describe('GET /api/collaborators/partners/<partnerId> - Ruta para mostrar un soc
       });
   });
 });
+const getPartnerId = async (): Promise<string> => {
+  const partnerRepo = getRepository(Partner);
+  const partner = await partnerRepo.createQueryBuilder('partner').getOne();
+  if (!partner || !partner.id) throw Error('No partner');
+  return partner.id;
+};

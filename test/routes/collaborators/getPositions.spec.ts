@@ -4,29 +4,18 @@ import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
 
+import getToken from '../../helpers/getToken.helper';
+
 const app = createServer();
 
 describe('GET /api/collaborators/employees/positions - Ruta para mostrar las posiciones registradas', () => {
   let token: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          done();
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Muestra a las posiciones registradas en el sistema', (done) => {
     request(app)

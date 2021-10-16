@@ -1,6 +1,6 @@
 exec_test:
 	docker-compose -f docker-compose.test.yml down
-	sudo rm -rf ../test_db
+	sudo rm -rf ../data
 	sudo rm -rf ../files
 	docker-compose -f docker-compose.test.yml up -d
 	npm run seed

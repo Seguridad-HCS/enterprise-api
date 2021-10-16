@@ -7,12 +7,14 @@ import {
   BaseEntity,
   PrimaryColumn,
   getRepository,
-  BeforeUpdate
+  BeforeUpdate,
+  OneToMany
 } from 'typeorm';
 import { IsString, IsUUID, Length, validateOrReject } from 'class-validator';
 import { v4 as uuidv4 } from 'uuid';
 
 import BillingAddress from 'models/BillingAddress.model';
+import BillingProcess from 'models/BillingProcess.model';
 
 interface Ibilling {
   method: string;
@@ -39,17 +41,17 @@ export default class Billing extends BaseEntity {
   @IsUUID()
   id?: string;
 
-  @Column({ type: 'varchar', length: 30, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 30, nullable: false, unique: false })
   @IsString()
   @Length(3, 30)
   method?: string | null;
 
-  @Column({ type: 'varchar', length: 30, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 30, nullable: false, unique: false })
   @IsString()
   @Length(3, 30)
   chequeno?: string | null;
 
-  @Column({ type: 'varchar', length: 30, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 30, nullable: false, unique: false })
   @IsString()
   @Length(3, 30)
   account?: string | null;
@@ -59,6 +61,11 @@ export default class Billing extends BaseEntity {
   @OneToOne(() => BillingAddress, { cascade: true, nullable: false })
   @JoinColumn({ name: 'addressId' })
   address?: BillingAddress;
+
+  @OneToMany(() => BillingProcess, (process) => process.billing, {
+    cascade: true
+  })
+  processes?: BillingProcess[];
 
   public constructor(params?: Ibilling) {
     super();
@@ -74,6 +81,7 @@ export default class Billing extends BaseEntity {
     this.account = params.account ? params.method : null;
   }
   public async getAddress(): Promise<IbillingAddress> {
+    if (this.id === undefined) throw Error('No billing');
     const billing = await getRepository(Billing)
       .createQueryBuilder('billing')
       .select('billing.id')
@@ -83,6 +91,16 @@ export default class Billing extends BaseEntity {
     if (billing === undefined) throw Error('No billing');
     this.address = billing.address;
     return billing as IbillingAddress;
+  }
+  public async getProcesses(): Promise<BillingProcess[]> {
+    if (this.id === undefined) throw Error('No billing');
+    const processes = await getRepository(BillingProcess)
+      .createQueryBuilder('process')
+      .where('process.billing = :billingId', { billingId: this.id })
+      .getMany();
+    processes.forEach((process: BillingProcess) => delete process.billingId);
+    this.processes = processes;
+    return this.processes;
   }
   public async validateInstance(): Promise<void> {
     await validateOrReject(this, {

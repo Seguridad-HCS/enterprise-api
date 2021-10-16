@@ -178,7 +178,7 @@ const employee2 = new Employee({
   // image: './public/assets/_testpf1.jpg',
   locationProfile: devHouseDEVProfile
 });
-employee1.setPassword('thisIsAtest98!');
+employee2.setPassword('thisIsAtest98!');
 
 const employee3 = new Employee({
   name: 'Oscar',
@@ -194,7 +194,7 @@ const employee3 = new Employee({
   // image: './public/assets/_testpf1.jpg',
   locationProfile: devHouseDEVProfile
 });
-employee1.setPassword('thisIsAtest98!');
+employee3.setPassword('thisIsAtest98!');
 
 // Partners
 const partner1 = new Partner({
@@ -221,9 +221,22 @@ const partner3 = new Partner({
   phoneNumber: '+525511664477',
   email: 'jedi@sample.com'
 });
+const partner4 = new Partner({
+  name: 'Microsoft',
+  legalName: 'Microsoft Enterprise S.A. de C.V.',
+  rfc: 'VAMO990503Q56',
+  representative: 'Alan Joseph Turing',
+  phoneNumber: '+525511664477',
+  email: 'alan@sample.com'
+});
 
 // Partner billing
 const billing1 = new Billing({
+  method: 'Transferencia bancaria',
+  chequeno: '123456789765',
+  account: '45667890897685'
+});
+const billing2 = new Billing({
   method: 'Transferencia bancaria',
   chequeno: '123456789765',
   account: '45667890897685'
@@ -311,9 +324,11 @@ const seed = async () => {
 
     // Create partners
     partner1.billing = billing1;
+    partner2.billing = billing2;
     await partner1.save();
     await partner2.save();
     await partner3.save();
+    await partner4.save();
     logger.debug('Socios creados');
 
     // Create parner contacts

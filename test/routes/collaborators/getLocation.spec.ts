@@ -1,42 +1,25 @@
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import Location from '../../../src/models/Location.model';
+
+import getToken from '../../helpers/getToken.helper';
 
 const app = createServer();
 
 describe('GET /api/collaborators/locations/<locationId> - Muestra una locacion especifica', () => {
   let token: string;
-  let locationId: number;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          request(app)
-            .get('/api/collaborators/locations')
-            .set('token', token)
-            .expect('Content-type', /json/)
-            .expect(200)
-            .end((err, res) => {
-              if (err) return done(err);
-              locationId = res.body.locations[0].id;
-              done();
-            });
-        });
-    });
+  let locationId: string;
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    locationId = await getLocationId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Muestra el registro completo de una locacion', (done) => {
     request(app)
@@ -79,3 +62,9 @@ describe('GET /api/collaborators/locations/<locationId> - Muestra una locacion e
       });
   });
 });
+const getLocationId = async (): Promise<string> => {
+  const locationRepo = getRepository(Location);
+  const location = await locationRepo.createQueryBuilder('location').getOne();
+  if (!location || !location.id) throw Error('No location');
+  return location.id;
+};
