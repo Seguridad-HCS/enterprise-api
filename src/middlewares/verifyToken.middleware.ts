@@ -20,16 +20,12 @@ export default async (
     ) as jwt.JwtPayload;
     const query = await getRepository(Employee)
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.locationProfile', 'locProfile')
-      .leftJoinAndSelect('locProfile.position', 'position')
       .where('user.id = :id', { id: payload.data })
       .getOne();
     req.user = query;
-    if (!query) throw Error('Bad token');
-    if (process.env.NODE_ENV !== 'test') {
-      if (query.lastLogin !== payload.iat) throw Error('Bad token');
+    if (!query || query?.lastLogin !== payload.iat) throw Error('Bad token');
+    if (process.env.NODE_ENV !== 'test')
       logger.info(`${req.user.id} -> ${req.originalUrl}`);
-    }
     next();
   } catch (e) {
     if (e instanceof Error)

@@ -1,8 +1,13 @@
 import request from 'supertest';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import Location from '../../../src/models/Location.model';
+import Position from '../../../src/models/Position.model';
+
+import getToken from '../../helpers/getToken.helper';
 
 const app = createServer();
 
@@ -10,40 +15,14 @@ describe('POST /api/collaborators/locations/profiles - Ruta de creacion de perfi
   let token: string;
   let locationId: string;
   let positionId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random partnerId
-          request(app)
-            .get('/api/collaborators/locations')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              locationId = res.body.locations[0].id;
-              request(app)
-                .get('/api/collaborators/employees/positions')
-                .set('token', token)
-                .end((err, res) => {
-                  if (err) return done(err);
-                  positionId = res.body.positions[0].id;
-                  done();
-                });
-            });
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    locationId = await getLocationId();
+    positionId = await getPositionId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('201 - Perfil de locacion registrado', (done) => {
     request(app)
@@ -138,3 +117,15 @@ describe('POST /api/collaborators/locations/profiles - Ruta de creacion de perfi
       });
   });
 });
+const getLocationId = async (): Promise<string> => {
+  const locationRepo = getRepository(Location);
+  const location = await locationRepo.createQueryBuilder('location').getOne();
+  if (!location || !location.id) throw Error('No location');
+  return location.id;
+};
+const getPositionId = async (): Promise<string> => {
+  const positionRepo = getRepository(Position);
+  const position = await positionRepo.createQueryBuilder('position').getOne();
+  if (!position || !position.id) throw Error('No position');
+  return position.id;
+};

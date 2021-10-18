@@ -1,53 +1,28 @@
 import { expect } from 'chai';
-import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
 import dotenv from 'dotenv';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 
 import dbConnection from '../../../src/dbConnection';
 import createServer from '../../../src/server';
+
+import getToken from '../../helpers/getToken.helper';
+
+import LocationProfile from '../../../src/models/LocationProfile.model';
 
 const app = createServer();
 dotenv.config();
 
 describe('POST /api/collaborators/employees - Crea un empleado', () => {
   let token: string;
-  let newEmployeeId: string;
   let profileId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random position Id
-          request(app)
-            .get('/api/collaborators/locations')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              const locationId = res.body.locations[0].id;
-              request(app)
-                .get(`/api/collaborators/locations/${locationId}`)
-                .set('token', token)
-                .end((err, res) => {
-                  if (err) return done(err);
-                  profileId = res.body.location.profiles[0].id;
-                  done();
-                });
-            });
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    profileId = await getProfileId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('201 - Socio registrado', (done) => {
     // TODO especificar el objeto que se recibe
@@ -71,7 +46,6 @@ describe('POST /api/collaborators/employees - Crea un empleado', () => {
       .expect(201)
       .end((err, res) => {
         if (err) return done(err);
-        newEmployeeId = res.body.employee.id;
         done();
       });
   });
@@ -140,3 +114,9 @@ describe('POST /api/collaborators/employees - Crea un empleado', () => {
       });
   });
 });
+const getProfileId = async (): Promise<string> => {
+  const profileRepo = getRepository(LocationProfile);
+  const profile = await profileRepo.createQueryBuilder('partner').getOne();
+  if (!profile || !profile.id) throw Error('No profiles');
+  return profile.id;
+};

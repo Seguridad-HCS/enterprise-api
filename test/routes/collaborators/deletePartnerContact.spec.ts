@@ -1,22 +1,24 @@
 import request from 'supertest';
-import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
+import { getConnection } from 'typeorm';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
 
 import getToken from '../../helpers/getToken.helper';
-
-import PartnerContact from '../../../src/models/PartnerContact.model';
+import getPrtnLessContacts from '../../helpers/getPartnerLessContacts.helper';
 
 const app = createServer();
 
 describe('DELETE /api/collaborators/partners/contacts/<contactsId> - Elimina el contacto de un socio', () => {
   let token: string;
-  let contactId: string;
+  let contactId: string | undefined;
   before(async () => {
     await dbConnection();
     token = await getToken();
-    contactId = await getContactId();
+    const prtn = await getPrtnLessContacts();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    contactId = prtn.contacts![0].id;
+    if (!contactId) throw Error('No contact');
   });
   after(async () => {
     await getConnection().close();
@@ -69,9 +71,3 @@ describe('DELETE /api/collaborators/partners/contacts/<contactsId> - Elimina el 
       });
   });
 });
-const getContactId = async (): Promise<string> => {
-  const contactRepo = getRepository(PartnerContact);
-  const contact = await contactRepo.createQueryBuilder('contact').getOne();
-  if (!contact || !contact.id) throw Error('No contact');
-  return contact.id;
-};

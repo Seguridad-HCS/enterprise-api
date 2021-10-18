@@ -17,12 +17,15 @@ export default async (req: Request, res: Response): Promise<void> => {
       .leftJoinAndSelect('locProfile.position', 'position')
       .where('user.id = :id', { id: payload.data })
       .getOne();
-    if (!query) throw Error('Bad token');
+    if (!query || query.lastLogin == payload.iat) throw Error('Bad token');
     else {
+      query.lastLogin = payload.iat;
       query.setPassword(req.body.password);
-      logger.info(`${query.id} -> ${req.originalUrl}`);
+      await query.save();
+      if (process.env.NODE_ENV !== 'test')
+        logger.info(`${req.user.id} -> ${req.originalUrl}`);
       res.status(200).json({
-        server: 'Contraseña modificada'
+        server: 'Contraseña actualizada'
       });
     }
   } catch (err) {

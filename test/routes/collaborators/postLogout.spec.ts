@@ -4,29 +4,18 @@ import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
 
+import getToken from '../../helpers/getToken.helper';
+
 const app = createServer();
 
 describe('POST /api/collaborators/auth/logout - Ruta para cerrar sesion de un colaborador', () => {
   let token: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          done();
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('200 - Sesion finalizada exitosamente', (done) => {
     request(app)

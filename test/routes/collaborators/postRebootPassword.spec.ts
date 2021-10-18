@@ -7,13 +7,10 @@ import dbConnection from '../../../src/dbConnection';
 const app = createServer();
 
 describe('POST /api/collaborators/auth/reboot - Solicita un token de recuperacion de correo', () => {
-  before((done) => {
-    dbConnection().then(() => done());
+  before(async () => {
+    await dbConnection();
   });
-  after((done) => {
-    getConnection().close();
-    done();
-  });
+  after(async () => await getConnection().close());
   it('200 - Correo de recuperacion enviado al colaborador', (done) => {
     request(app)
       .post('/api/collaborators/auth/reboot')

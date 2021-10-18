@@ -9,7 +9,7 @@ import morgan from 'morgan';
 
 import routes from 'routes/index';
 import swaggerSetup from 'docs/swaggerSetup.doc';
-import morganMiddleware from 'middlewares/morgan.middleWare';
+import morganMiddleware from 'middlewares/morgan.middleware';
 
 export default function createServer(): express.Application {
   dotenv.config();

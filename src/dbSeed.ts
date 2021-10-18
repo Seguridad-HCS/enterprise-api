@@ -1,4 +1,4 @@
-import dbConnection from './dbConnection';
+import dbConnection from 'dbConnection';
 import fs from 'fs';
 import path from 'path';
 
@@ -257,6 +257,42 @@ const partnerContact2 = new PartnerContact({
   email: 'carlos@ejemplo.com',
   partner: partner2
 });
+const partnerContact3 = new PartnerContact({
+  name: 'Alejandro Vazquez Perez',
+  role: 'Director administrativo',
+  phoneNumber: '+525558451766',
+  email: 'alejandro@ejemplo.com',
+  partner: partner2
+});
+const partnerContact4 = new PartnerContact({
+  name: 'Daniel Vazquez Perez',
+  role: 'Director asociado',
+  phoneNumber: '+525558451777',
+  email: 'daniel@ejemplo.com',
+  partner: partner2
+});
+const partnerContact5 = new PartnerContact({
+  name: 'Gerardo Vazquez Perez',
+  role: 'Director secundario',
+  phoneNumber: '+525558451788',
+  email: 'gerardo@ejemplo.com',
+  partner: partner2
+});
+const partnerContact6 = new PartnerContact({
+  name: 'Raymundo Vazquez Perez',
+  role: 'Gerente asociado',
+  phoneNumber: '+525558451777',
+  email: 'raymundo@ejemplo.com',
+  partner: partner2
+});
+const partnerContact7 = new PartnerContact({
+  name: 'Francisco Vazquez Perez',
+  role: 'Gerente asociado',
+  phoneNumber: '+525558451777',
+  email: 'francisco@ejemplo.com',
+  partner: partner3
+});
+
 // Service files
 const buffer = fs.readFileSync(
   path.resolve(__dirname, '../test/sampleFiles/test.pdf')
@@ -334,6 +370,11 @@ const seed = async () => {
     // Create parner contacts
     await partnerContact1.save();
     await partnerContact2.save();
+    await partnerContact3.save();
+    await partnerContact4.save();
+    await partnerContact5.save();
+    await partnerContact6.save();
+    await partnerContact7.save();
     logger.debug('Contactos creados');
 
     // Create services

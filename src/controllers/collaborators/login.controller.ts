@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-import Employee from '../../models/Employee.model';
+import Employee from 'models/Employee.model';
 import logger from 'logger';
 
 dotenv.config();

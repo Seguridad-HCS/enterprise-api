@@ -1,45 +1,25 @@
 import request from 'supertest';
 import path from 'path';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
+
+import getToken from '../../helpers/getToken.helper';
+import Service from '../../../src/models/Service.model';
 
 const app = createServer();
 
 describe('POST /api/collaborators/services/file - Ruta de creacion de archivo de servicio', () => {
   let token: string;
   let serviceId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random partnerId
-          request(app)
-            .get('/api/collaborators/partners')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              const partner = res.body.partners.find(
-                (partner: any) => partner.services.length > 0
-              );
-              serviceId = partner.services[0].id;
-              done();
-            });
-        });
-    });
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    serviceId = await getServiceId();
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('201 - Acta constitutiva actualizada - Etapa de registro', (done) => {
     request(app)
@@ -161,3 +141,9 @@ describe('POST /api/collaborators/services/file - Ruta de creacion de archivo de
       });
   });
 });
+const getServiceId = async (): Promise<string> => {
+  const serviceRepo = getRepository(Service);
+  const service = await serviceRepo.createQueryBuilder('service').getOne();
+  if (!service || !service.id) throw Error('No service');
+  return service.id;
+};

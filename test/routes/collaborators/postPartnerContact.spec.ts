@@ -4,38 +4,24 @@ import { expect } from 'chai';
 import createServer from '../../../src/server';
 import dbConnection from '../../../src/dbConnection';
 
+import getToken from '../../helpers/getToken.helper';
+import getPrtnLessContacts from '../../helpers/getPartnerLessContacts.helper';
+import getPrtnFullContacts from '../../helpers/getPartnerFullContacts.helper';
+
 const app = createServer();
 
 describe('POST /api/collaborators/partners/contacts - Ruta de creacion de contacto de un socio', () => {
   let token: string;
-  let partnerId: string;
-  const loginData = {
-    email: 'seguridadhcsdevs@gmail.com',
-    password: 'thisIsAtest98!'
-  };
-  before((done) => {
-    dbConnection().then(() => {
-      request(app)
-        .post('/api/collaborators/auth/login')
-        .send(loginData)
-        .end((err, res) => {
-          if (err) return done(err);
-          token = res.headers.token;
-          // Get some random partnerId
-          request(app)
-            .get('/api/collaborators/partners')
-            .set('token', token)
-            .end((err, res) => {
-              if (err) return done(err);
-              partnerId = res.body.partners[0].id;
-              done();
-            });
-        });
-    });
+  let prtnLessId: string | undefined;
+  let prtnFullId: string | undefined;
+  before(async () => {
+    await dbConnection();
+    token = await getToken();
+    ({ id: prtnLessId } = await getPrtnLessContacts());
+    ({ id: prtnFullId } = await getPrtnFullContacts());
   });
-  after((done) => {
-    getConnection().close();
-    done();
+  after(async () => {
+    await getConnection().close();
   });
   it('201 - Contacto creado exitosamente', (done) => {
     request(app)
@@ -46,7 +32,7 @@ describe('POST /api/collaborators/partners/contacts - Ruta de creacion de contac
         role: 'Predinte de la empresa',
         phoneNumber: '+525533554499',
         email: 'john@doe.com',
-        partner: partnerId
+        partner: prtnLessId
       })
       .expect('Content-type', /json/)
       .expect(201)
@@ -71,7 +57,7 @@ describe('POST /api/collaborators/partners/contacts - Ruta de creacion de contac
         role: 'Predinte de la empresa',
         phoneNumber: '+525533554499',
         email: 'john@doe.com',
-        partner: partnerId
+        partner: prtnLessId
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(400)
@@ -101,8 +87,26 @@ describe('POST /api/collaborators/partners/contacts - Ruta de creacion de contac
         done();
       });
   });
-  it('405 - Se ha alcanzado el limite de contactos en un socio TESTEO PENDIENTE', (done) => {
-    done();
+  it('405 - Se ha alcanzado el limite de contactos en el socio', (done) => {
+    request(app)
+      .post('/api/collaborators/partners/contacts')
+      .set('token', token)
+      .send({
+        name: 'John Doe Test',
+        role: 'Predinte de la empresa',
+        phoneNumber: '+525533554499',
+        email: 'john@doe.com',
+        partner: prtnFullId
+      })
+      .expect('Content-type', /json/)
+      .expect(405)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body.server).to.equal(
+          'Se ha alcanzado el numero maximo de registros'
+        );
+        done();
+      });
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
