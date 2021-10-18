@@ -11,8 +11,10 @@ import Partner from 'models/Partner.model';
 import PartnerContact from 'models/PartnerContact.model';
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
-import logger from 'logger';
 import Billing from 'models/Billing.model';
+import BillingProcess from 'models/BillingProcess.model';
+
+import logger from 'logger';
 
 // Departments of HCS
 const managerDep = new Department({
@@ -58,7 +60,6 @@ const recruiter = new Position({
   description: 'Pendiente de descripcion',
   department: hrDep
 });
-
 // Locations
 const devHouse = new Location({
   name: 'Oficina de desarrollo',
@@ -72,7 +73,6 @@ const devHouse = new Location({
     state: 'Ciudad de Mexico'
   }
 });
-
 const testOffice = new Location({
   name: 'Oficina de pruebas',
   address: {
@@ -98,7 +98,6 @@ const devHouseCTOProfile = new LocationProfile({
   position: cto,
   location: devHouse
 });
-
 const devHouseDEVProfile = new LocationProfile({
   total: 5,
   minAge: 18,
@@ -110,7 +109,6 @@ const devHouseDEVProfile = new LocationProfile({
   position: dev,
   location: devHouse
 });
-
 const devHouseRECRUITERProfile = new LocationProfile({
   total: 1,
   minAge: 18,
@@ -122,7 +120,6 @@ const devHouseRECRUITERProfile = new LocationProfile({
   position: recruiter,
   location: devHouse
 });
-
 const testOfficeCEOProfile = new LocationProfile({
   total: 1,
   minAge: 18,
@@ -134,7 +131,6 @@ const testOfficeCEOProfile = new LocationProfile({
   position: ceo,
   location: testOffice
 });
-
 const testOfficeRECRUITERProfile = new LocationProfile({
   total: 1,
   minAge: 18,
@@ -146,7 +142,6 @@ const testOfficeRECRUITERProfile = new LocationProfile({
   position: recruiter,
   location: testOffice
 });
-
 // Employees
 const employee1 = new Employee({
   name: 'John',
@@ -163,7 +158,6 @@ const employee1 = new Employee({
   locationProfile: devHouseCTOProfile
 });
 employee1.setPassword('thisIsAtest98!');
-
 const employee2 = new Employee({
   name: 'Julio',
   surname: 'Perez',
@@ -179,7 +173,6 @@ const employee2 = new Employee({
   locationProfile: devHouseDEVProfile
 });
 employee2.setPassword('thisIsAtest98!');
-
 const employee3 = new Employee({
   name: 'Oscar',
   surname: 'Martinez',
@@ -195,7 +188,6 @@ const employee3 = new Employee({
   locationProfile: devHouseDEVProfile
 });
 employee3.setPassword('thisIsAtest98!');
-
 // Partners
 const partner1 = new Partner({
   name: 'Comex',
@@ -229,7 +221,6 @@ const partner4 = new Partner({
   phoneNumber: '+525511664477',
   email: 'alan@sample.com'
 });
-
 // Partner billing
 const billing1 = new Billing({
   method: 'Transferencia bancaria',
@@ -241,7 +232,32 @@ const billing2 = new Billing({
   chequeno: '123456789765',
   account: '45667890897685'
 });
-
+// Partner billing process
+const process1 = new BillingProcess({
+  name: 'Entrega de cheque en efectivo',
+  description: 'Se entrega el cheque en efectivo',
+  billing: billing1
+});
+const process2 = new BillingProcess({
+  name: 'Transferencia electronica',
+  description: 'Se realizara una transferencia electronica',
+  billing: billing1
+});
+const process3 = new BillingProcess({
+  name: 'contraentrega',
+  description: 'entrega personal en las oficinas',
+  billing: billing1
+});
+const process4 = new BillingProcess({
+  name: 'Endose de factura',
+  description: 'Se endosara una factura al portador',
+  billing: billing1
+});
+const process5 = new BillingProcess({
+  name: 'Dinero en efectivo',
+  description: 'Se entrega un maletin en efectivo',
+  billing: billing1
+});
 // Partner contacts
 const partnerContact1 = new PartnerContact({
   name: 'Carlos Vazquez Perez',
@@ -366,6 +382,14 @@ const seed = async () => {
     await partner3.save();
     await partner4.save();
     logger.debug('Socios creados');
+
+    // Create billing processes
+    await process1.save();
+    await process2.save();
+    await process3.save();
+    await process4.save();
+    await process5.save();
+    logger.debug('Procesos de facturacion creados');
 
     // Create parner contacts
     await partnerContact1.save();

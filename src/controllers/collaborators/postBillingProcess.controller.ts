@@ -18,7 +18,7 @@ export default async (req: Request, res: Response): Promise<void> => {
       });
     else {
       if ((await partner.billing.getProcesses()).length + 1 > 5)
-        res.status(200).json({
+        res.status(405).json({
           server: 'Se ha alcanzado el numero maximo (5) de procesos de registro'
         });
       else {

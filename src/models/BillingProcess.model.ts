@@ -16,7 +16,7 @@ import Billing from 'models/Billing.model';
 interface Iprocess {
   name: string;
   description: string;
-  billing: string;
+  billing: string | Billing;
 }
 
 @Entity({ name: 'billing_process' })

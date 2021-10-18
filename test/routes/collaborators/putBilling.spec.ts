@@ -20,10 +20,6 @@ describe('PUT /api/collaborators/partner/<partnerId>/billing - Actualiza la info
   after(async () => {
     await getConnection().close();
   });
-  after((done) => {
-    getConnection().close();
-    done();
-  });
   it('400 - Error en el input al crear la informacion de facturacion', (done) => {
     request(app)
       .put(`/api/collaborators/partners/${partnerId}/billing`)
