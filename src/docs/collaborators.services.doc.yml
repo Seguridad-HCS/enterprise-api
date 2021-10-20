@@ -81,69 +81,6 @@ paths:
                   server:
                     type: string
                     example: Token corrupto
-  /collaborators/services/file:
-    post:
-      summary: Registra/actualiza el archivo de un servicio
-      description: Registra/actualiza el archivo de un servicio
-      tags: [Colaboradores - Servicios]
-      parameters:
-      - name: token
-        in: header
-        required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                partner:
-                  type: string
-                  example: thisisatest
-      responses:
-        '201':    # status code
-          description: Servicio creado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  server:
-                    type: string
-                    example: Socio creado
-                  partner:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: 1d3f1294-9eb5-481a-987e-8896e67ab651
-                      name:
-                        type: string
-                        example: Empresa de pruebas
-                      legalName:
-                        type: string
-                        example: Empresa de pruebas S.A. de C.V.
-                      representative:
-                        type: string
-                        example: John Doe Test
-                      rfc:
-                        type: string
-                        example: MJO002356S76
-                      email:
-                        type: string
-                        example: ejemplo@test.com
-                      phoneNumber:
-                        type: string
-                        example: +524458275377
-        '405':
-          description: Error del cliente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  server:
-                    type: string
-                    example: El empleado actualmente tiene funciones activas en el sistema
   /collaborators/services/{serviceId}:
     get:
       summary: Muestra un servicio en especifico
@@ -172,9 +109,9 @@ paths:
                   server:
                     type: string
                     example: El perfil esta asociado a un servicio que no esta en etapa de registro
-  /collaborators/services/{serviceId}/{fileName}:
+  /collaborators/services/{serviceId}/file:
     get:
-      summary: Muestra un servicio en especifico
+      summary: Muestra un archivo de servicio en especifico
       description: Muestra un servicio en especifico
       tags: [Colaboradores - Servicios]
       parameters:
@@ -188,7 +125,7 @@ paths:
         schema:
           type: string
       - name: fileName
-        in: path
+        in: query
         required: true
         description: Nombre del archivo
         schema:
@@ -216,3 +153,118 @@ paths:
                   server:
                     type: string
                     example: Token corrupto
+    post:
+      summary: Registra/actualiza el archivo de un servicio
+      description: Registra/actualiza el archivo de un servicio
+      tags: [Colaboradores - Servicios]
+      parameters:
+      - name: token
+        in: header
+        required: true
+      - name: serviceId
+        in: path
+        required: true
+        description: Colocar el Id del servicio
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':    # status code
+          description: Servicio creado o actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Socio creado
+        '404':    # status code
+          description: El servicio no fue encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: El servicio no fue creado
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto
+  /collaborators/services/{serviceId}/file/lock:
+    put:
+      summary: Bloquea o desbloquea un archivo del servicio
+      description: Bloquea o desbloquea un servicio en especifico
+      tags: [Colaboradores - Servicios]
+      parameters:
+      - name: token
+        in: header
+        required: true
+      - name: serviceId
+        in: path
+        required: true
+        description: Colocar el ID del servicio
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  example: constitutiveAct
+                lock:
+                  type: boolean
+                  example: true
+      responses:
+        '200':    # status code
+          description: Bloqueo actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Bloqueo actualizado
+        '404':    # status code
+          description: El registro no fue encontrado, para mas informacion revisar el response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: El archivo no ha sido registrado
+        '405':
+          description: Error del cliente, para mas informacion revisar el contenido de la respuesta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  server:
+                    type: string
+                    example: Token corrupto
+    

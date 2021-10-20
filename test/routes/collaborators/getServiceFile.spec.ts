@@ -22,7 +22,9 @@ describe('GET /api/collaborators/services/<serviceId>/<fileName> - Ruta para des
   });
   it('200 - Obtiene el archivo del servicio', (done) => {
     request(app)
-      .get(`/api/collaborators/services/${serviceId}/constitutiveAct`)
+      .get(
+        `/api/collaborators/services/${serviceId}/file?fileName=constitutiveAct`
+      )
       .set('token', token)
       .expect('Content-type', 'application/pdf')
       .expect(200)
@@ -33,7 +35,9 @@ describe('GET /api/collaborators/services/<serviceId>/<fileName> - Ruta para des
   });
   it('404 - El servicio no fue encontrado', (done) => {
     request(app)
-      .get(`/api/collaborators/services/thisIsATest/constitutiveAct`)
+      .get(
+        `/api/collaborators/services/thisIsATest/file?fileName=constitutiveAct`
+      )
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -45,7 +49,7 @@ describe('GET /api/collaborators/services/<serviceId>/<fileName> - Ruta para des
   });
   it('404 - Nombre del archivo inexistente', (done) => {
     request(app)
-      .get(`/api/collaborators/services/${serviceId}/thisIsATest`)
+      .get(`/api/collaborators/services/${serviceId}/file?fileName=thisIsATest`)
       .set('token', token)
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(404)
@@ -57,7 +61,9 @@ describe('GET /api/collaborators/services/<serviceId>/<fileName> - Ruta para des
   });
   it('405 - Test de proteccion a la ruta', (done) => {
     request(app)
-      .get(`/api/collaborators/services/${serviceId}/constitutiveAct`)
+      .get(
+        `/api/collaborators/services/${serviceId}/file?fileName=constitutiveAct`
+      )
       .expect('Content-type', 'application/json; charset=utf-8')
       .expect(405)
       .end((err, res) => {

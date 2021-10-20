@@ -1,41 +1,42 @@
 import { Request, Response } from 'express';
 import logger from 'logger';
+
 import Service from 'models/Service.model';
 import ServiceFile from 'models/ServiceFile.model';
 
-const serviceFiles = [
+const registerFiles = [
   'constitutiveAct',
-  'powerOfattorney',
+  'powerOfAttorney',
   'addressProof',
-  'ine',
-  'contract'
+  'ine'
 ];
+const negotiationFiles = ['contract'];
 
 export default async (req: Request, res: Response): Promise<void> => {
   try {
     const service = new Service() as any;
     await service.getService(req.params.serviceId);
     if (
-      req.query.fileName != undefined &&
-      serviceFiles.includes(req.query.fileName as string)
+      service.status === 'registro' &&
+      registerFiles.includes(req.body.fileName)
     ) {
-      const serviceFile = service[req.query.fileName as string] as ServiceFile;
+      const key = req.body.fileName as keyof typeof service;
+      const serviceFile = service[key] as ServiceFile;
       if (serviceFile !== null) {
-        const file = serviceFile.getFile();
-        res.status(200).header({
-          'Content-disposition': `attachment; filename="${req.params.fileName}.pdf"`,
-          'Content-Type': 'application/pdf'
+        service.lock = req.body.lock;
+        await service.save();
+        res.status(200).json({
+          server: 'Bloqueo actualizado'
         });
-        file.pipe(res);
-      } else {
-        res.status(404).json({
-          server: 'Archivo no encontrado'
+      } else
+        res.status(405).json({
+          server: 'El archivo no ha sido registrado'
         });
-      }
-    } else
-      res.status(404).json({
-        server: 'Nombre del archivo inexistente'
+    } else {
+      res.status(405).json({
+        server: 'El nombre del archivo no coincide con la etapa del servicio'
       });
+    }
   } catch (err) {
     if (err instanceof Error) {
       if (err.message === 'No service')

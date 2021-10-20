@@ -15,13 +15,13 @@ const negotiationFiles = ['contract'];
 export default async (req: Request, res: Response): Promise<void> => {
   try {
     const service = new Service() as any;
-    await service.getService(req.body.service);
+    await service.getService(req.params.serviceId);
     if (
       service.status === 'registro' &&
-      registerFiles.includes(req.body.file) &&
+      registerFiles.includes(req.body.fileName) &&
       req.file != undefined
     ) {
-      const key = req.body.file as keyof typeof service;
+      const key = req.body.fileName as keyof typeof service;
       const serviceFile = service[key] as ServiceFile;
       if (serviceFile !== null) {
         if (serviceFile.lock)

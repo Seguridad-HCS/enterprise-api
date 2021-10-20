@@ -323,6 +323,7 @@ const fileData = {
   size: bufferSize
 } as Express.Multer.File;
 const file1 = new ServiceFile();
+file1.lock = true;
 const file2 = new ServiceFile();
 
 // Services
